@@ -7,7 +7,7 @@ import { RouterLink } from 'vue-router';
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <header class="text-xl">
+    <header class="text-xl flex justify-between items-center border-b border-ash/20">
       <button class="p-2" popovertarget="main-nav">La Lista</button>
 
       <nav popover id="main-nav" class="open:flex flex-col min-w-screen bg-sky-950 text-ash backdrop:backdrop-blur-sm">
@@ -31,9 +31,10 @@ import { RouterLink } from 'vue-router';
         </RouterLink>
       </nav>
 
-      <button>
+      <button class="p-2">
         <FontAwesomeIcon :icon="faPlus" />
       </button>
+
     </header>
 
     <main class="grow">
