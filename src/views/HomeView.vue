@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import MainNav from '@/components/main-nav/MainNav.vue';
-import { faCaretDown, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { computed, onMounted } from 'vue';
-import CategoryButton from '@/components/shopping-list/header/item-category/CategoryButton.vue';
 import { useShoppingListStore } from '@/stores/shoppingList';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import ToggleNavButton from '@/components/main-nav/ToggleNavButton.vue';
@@ -32,20 +29,8 @@ function itemIsChecked(itemId: string) {
   return selectMultipleIds.selectedIds.value.includes(itemId)
 }
 
-const listProgressText = computed(() => {
-  if (!shoppingListStore.items) {
-    return
-  }
 
-  if (selectMultipleIds.selectedIds.value.length === shoppingListStore.items.length) {
-    return `(${selectMultipleIds.selectedIds.value.length}/${shoppingListStore.items.length}) - Completed`
-  }
-
-  return `(${selectMultipleIds.selectedIds.value.length}/${shoppingListStore.items.length})`
-})
-
-
-//// ItemCategory
+//// Item Category
 const itemCategories = computed(() => {
   if (!shoppingListStore.items) {
     return

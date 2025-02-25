@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import CategoryButton from './item-category/CategoryButton.vue';
 import { computed } from 'vue';
 
@@ -12,8 +13,26 @@ const props = defineProps<Props>()
 
 const listProgressText = computed(() => {
 
+  if (props.checkedItemsLength === props.listLength) {
+    return `(${props.checkedItemsLength}/${props.listLength}) - Completed`
+  }
+
   return `(${props.checkedItemsLength}/${props.listLength})`
 })
+
+const selectSingleId = useSelectSingleId()
+
+function handleClickCategory(category: string) {
+  selectSingleId.selectId(category)
+}
+
+function categoryIsSelected(category: string) {
+  return selectSingleId.selectedId.value === category
+}
+
+function handleClickCategoryAll() {
+  selectSingleId.clearSelection()
+}
 
 </script>
 
@@ -21,12 +40,12 @@ const listProgressText = computed(() => {
   <header>
     <ul class="flex gap-2 mb-2 flex-wrap">
       <li>
-        <CategoryButton :is-active="true">
+        <CategoryButton :is-active="!selectSingleId.selectedId.value" @click="handleClickCategoryAll">
           All
         </CategoryButton>
       </li>
       <li v-for="category in itemCategories" :key="category">
-        <CategoryButton>
+        <CategoryButton @click="() => handleClickCategory(category)" :is-active="categoryIsSelected(category)">
           {{ category }}
         </CategoryButton>
       </li>
