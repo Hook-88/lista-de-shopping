@@ -76,6 +76,12 @@ function handleClickCancelDelete() {
   confirmDeleteDialogRef.value?.close()
 }
 
+function handleClickConfirmDelete() {
+  shoppingListStore.deleteSelectedItems(selectMultipleIds.selectedIds.value)
+  selectMultipleIds.clearSelection()
+  confirmDeleteDialogRef.value?.close()
+}
+
 
 
 //Items to display
@@ -156,7 +162,7 @@ const displayItems = computed(() => {
       </main>
 
       <footer class="flex gap-2 p-2">
-        <BaseButton button-type="action" class="grow">
+        <BaseButton button-type="action" class="grow" @click="handleClickConfirmDelete">
           Confirm
         </BaseButton>
 
