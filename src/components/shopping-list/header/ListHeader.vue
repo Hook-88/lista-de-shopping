@@ -7,6 +7,7 @@ interface Props {
   itemCategories: string[]
   listLength: number
   checkedItemsLength: number
+  hideCheckedItems: boolean
 }
 
 const props = defineProps<Props>()
@@ -64,8 +65,8 @@ function handleClickToggleHideChecked() {
 
     <div class="text-sm mb-1 flex justify-between">
       <span>{{ listProgressText }}</span>
-      <button @click="handleClickToggleHideChecked">
-        Hide checked
+      <button @click="handleClickToggleHideChecked" :disabled="checkedItemsLength === 0" class="disabled:text-white/40">
+        {{ hideCheckedItems ? 'Show' : 'Hide' }} checked
       </button>
     </div>
 

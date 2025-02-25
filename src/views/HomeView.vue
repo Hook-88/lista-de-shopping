@@ -43,6 +43,7 @@ function handleOnChangeCategory(category: string | null) {
   categoryFilter.selectCategory.selectId(category)
 }
 
+
 const categoryToDisplay = computed(() => {
 
   if (categoryFilter.selectCategory.selectedId.value) {
@@ -51,6 +52,7 @@ const categoryToDisplay = computed(() => {
 
   return shoppingListStore.items
 })
+
 
 // Item unchecked filter
 const hideCheckedItems = ref(false)
@@ -102,7 +104,8 @@ const displayItems = computed(() => {
       <div v-if="shoppingListStore.items && categoryFilter.itemCategories.value">
         <ListHeader :item-categories="categoryFilter.itemCategories.value" :list-length="shoppingListStore.items.length"
           :checked-items-length="selectMultipleIds.selectedIds.value.length"
-          @on-change-category="handleOnChangeCategory" @on-toggle-hide-checked="handleClickToggleHideChecked" />
+          @on-change-category="handleOnChangeCategory" @on-toggle-hide-checked="handleClickToggleHideChecked"
+          :hide-checked-items="hideCheckedItems" />
 
         <ul class="space-y-1.5">
           <BaseItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
