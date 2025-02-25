@@ -4,6 +4,7 @@ import { faCaretDown, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { RouterLink } from 'vue-router';
 import { GROCERIES } from '@/data/data';
+import { faCircle } from '@fortawesome/free-regular-svg-icons';
 
 </script>
 
@@ -23,10 +24,46 @@ import { GROCERIES } from '@/data/data';
 
     </header>
 
-    <main class="grow px-2">
-      <ul>
-        <li v-for="item in GROCERIES" :key="item.id">{{ item.name }}</li>
-      </ul>
+    <main class="grow px-2 flex flex-col gap-4">
+
+      <div>
+        <header>
+          <ul class="flex gap-2 mb-2">
+            <li>
+              <button class="px-2 py-1 border border-ash/20 rounded-xl bg-emerald-800">
+                All
+              </button>
+            </li>
+            <li>
+              <button class="px-2 py-1 border border-ash/20 rounded-xl">
+                Bakery
+              </button>
+            </li>
+          </ul>
+
+          <div class="text-sm mb-1 flex justify-between">
+            <span>(4/12)</span>
+            <button>
+              Hide checked
+            </button>
+          </div>
+
+        </header>
+
+        <ul class="space-y-1.5">
+          <li v-for="item in GROCERIES" :key="item.id" class="pl-2 border border-ash/20 rounded flex items-center">
+            {{ item.name }}
+            <button class="p-2 ml-auto">
+              <FontAwesomeIcon :icon="faCircle" />
+            </button>
+          </li>
+        </ul>
+
+      </div>
+
+      <button class="p-2 rounded border border-ash/20 bg-red-900">
+        Delete checked items
+      </button>
 
     </main>
 
