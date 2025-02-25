@@ -6,7 +6,10 @@ import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { computed } from 'vue';
+import CategoryButton from '@/components/shopping-list/header/item-category/CategoryButton.vue';
 
+
+////CheckItem
 const selectMultipleIds = useSelectMultipleIds()
 
 function handleOnToggleCheck(itemId: string) {
@@ -24,6 +27,15 @@ const listProgressText = computed(() => {
 
   return `(${selectMultipleIds.selectedIds.value.length}/${GROCERIES.length})`
 })
+
+
+//// ItemCategory
+const itemCategories = computed(() => {
+  const allLabels = GROCERIES.map(item => item.label)
+
+  return [...new Set(allLabels)]
+})
+
 
 </script>
 
@@ -48,16 +60,16 @@ const listProgressText = computed(() => {
       <div>
 
         <header>
-          <ul class="flex gap-2 mb-2">
+          <ul class="flex gap-2 mb-2 flex-wrap">
             <li>
-              <button class="px-2 py-1 border border-ash/20 rounded-xl bg-emerald-800">
+              <CategoryButton :is-active="true">
                 All
-              </button>
+              </CategoryButton>
             </li>
-            <li>
-              <button class="px-2 py-1 border border-ash/20 rounded-xl">
-                Bakery
-              </button>
+            <li v-for="category in itemCategories" :key="category">
+              <CategoryButton>
+                {{ category }}
+              </CategoryButton>
             </li>
           </ul>
 
