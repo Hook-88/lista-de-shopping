@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { faAngleRight, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import MainNav from '@/components/main-nav/MainNav.vue';
+import { faAngleRight, faCaretDown, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { RouterLink } from 'vue-router';
 
@@ -8,28 +9,12 @@ import { RouterLink } from 'vue-router';
 <template>
   <div class="flex flex-col min-h-screen">
     <header class="text-xl flex justify-between items-center border-b border-ash/20">
-      <button class="p-2" popovertarget="main-nav">La Lista</button>
 
-      <nav popover id="main-nav" class="open:flex flex-col min-w-screen bg-sky-950 text-ash backdrop:backdrop-blur-sm">
-
-        <button class="p-2 flex justify-between items-center border-b border-ash/20" popovertarget="main-nav">
-          La Lista
-          <FontAwesomeIcon :icon="faClose" />
-        </button>
-
-        <RouterLink to="/recipes" class="p-2 flex justify-between items-center border-b border-ash/20">
-          Recipes
-          <FontAwesomeIcon :icon="faAngleRight" />
-        </RouterLink>
-
-        <RouterLink :to="{
-          name: 'about'
-        }" class="p-2 flex justify-between items-center border-b border-ash/20">
-
-          About
-          <FontAwesomeIcon :icon="faAngleRight" />
-        </RouterLink>
-      </nav>
+      <button class="p-2 flex items-center gap-2" popovertarget="main-nav">
+        La Lista
+        <FontAwesomeIcon :icon="faCaretDown" />
+      </button>
+      <MainNav />
 
       <button class="p-2">
         <FontAwesomeIcon :icon="faPlus" />
