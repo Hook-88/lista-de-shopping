@@ -19,6 +19,7 @@ onMounted(() => {
   shoppingListStore.items = GROCERIES
 })
 
+
 ////CheckItem
 const selectMultipleIds = useSelectMultipleIds()
 
@@ -54,12 +55,16 @@ const categoryToDisplay = computed(() => {
 })
 
 
-// Item unchecked filter
+//// Item unchecked filter
 const hideCheckedItems = ref(false)
 
 function handleClickToggleHideChecked() {
   hideCheckedItems.value = !hideCheckedItems.value
 }
+
+
+//Delete checked Items
+
 
 
 
@@ -115,7 +120,8 @@ const displayItems = computed(() => {
       </div>
 
 
-      <button class="p-2 rounded border border-ash/20 bg-red-900">
+      <button class="p-2 rounded border border-ash/20 bg-red-900 disabled:bg-red-900/50 disabled:text-white/40"
+        :disabled="selectMultipleIds.selectedIds.value.length === 0">
         Delete checked items
       </button>
 
