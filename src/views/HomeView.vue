@@ -3,14 +3,14 @@ import MainNav from '@/components/main-nav/MainNav.vue';
 import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useShoppingListStore } from '@/stores/shoppingList';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import ToggleNavButton from '@/components/main-nav/ToggleNavButton.vue';
 import ListHeader from '@/components/shopping-list/header/ListHeader.vue';
 import AddItemButton from '@/components/shopping-list/add-item/AddItemButton.vue';
 import PageFooter from '@/components/page-footer/PageFooter.vue';
-import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
+import { useCategoryFilter } from '@/components/shopping-list/filter/catergoryFilter';
 
 //Get shopping Items
 const shoppingListStore = useShoppingListStore()
@@ -31,36 +31,52 @@ function itemIsChecked(itemId: string) {
 }
 
 
-//// Item Category
-const itemCategories = computed(() => {
-  if (!shoppingListStore.items) {
-    return
-  }
-
-  const allLabels = shoppingListStore.items.map(item => item.label)
-
-  return [...new Set(allLabels)]
-})
+//// Item Category filter
+const categoryFilter = useCategoryFilter()
 
 function handleOnChangeCategory(category: string | null) {
   if (!category) {
-    selectSingleId.clearSelection()
+    categoryFilter.selectCategory.clearSelection()
     return
   }
 
-  selectSingleId.selectId(category)
-
+  categoryFilter.selectCategory.selectId(category)
 }
 
-const selectSingleId = useSelectSingleId()
+const categoryToDisplay = computed(() => {
 
-const displayItems = computed(() => {
-
-  if (selectSingleId.selectedId.value) {
-    return shoppingListStore.items?.filter(shoppingItem => shoppingItem.label === selectSingleId.selectedId.value)
+  if (categoryFilter.selectCategory.selectedId.value) {
+    return shoppingListStore.items?.filter(shoppingItem => shoppingItem.label === categoryFilter.selectCategory.selectedId.value)
   }
 
   return shoppingListStore.items
+})
+
+// Item unchecked filter
+const hideCheckedItems = ref(false)
+
+function handleClickToggleHideChecked() {
+  hideCheckedItems.value = !hideCheckedItems.value
+}
+
+
+
+//Items to display
+const displayItems = computed(() => {
+
+  if (hideCheckedItems.value) {
+
+    return categoryToDisplay.value?.filter(item => {
+
+      if (!selectMultipleIds.selectedIds.value.includes(item.id)) {
+
+        return item
+      }
+
+    })
+  }
+
+  return categoryToDisplay.value
 })
 
 
@@ -83,10 +99,10 @@ const displayItems = computed(() => {
 
     <main class="grow px-2 flex flex-col gap-4">
 
-      <div v-if="shoppingListStore.items && itemCategories">
-        <ListHeader :item-categories="itemCategories" :list-length="shoppingListStore.items.length"
+      <div v-if="shoppingListStore.items && categoryFilter.itemCategories.value">
+        <ListHeader :item-categories="categoryFilter.itemCategories.value" :list-length="shoppingListStore.items.length"
           :checked-items-length="selectMultipleIds.selectedIds.value.length"
-          @on-change-category="handleOnChangeCategory" />
+          @on-change-category="handleOnChangeCategory" @on-toggle-hide-checked="handleClickToggleHideChecked" />
 
         <ul class="space-y-1.5">
           <BaseItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"

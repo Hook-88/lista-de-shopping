@@ -13,6 +13,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'on-change-category', category: string | null): void
+  (e: 'on-toggle-hide-checked'): void
 }>()
 
 const listProgressText = computed(() => {
@@ -40,6 +41,10 @@ function handleClickCategoryAll() {
   emit('on-change-category', selectSingleId.selectedId.value)
 }
 
+function handleClickToggleHideChecked() {
+  emit('on-toggle-hide-checked')
+}
+
 </script>
 
 <template>
@@ -59,7 +64,7 @@ function handleClickCategoryAll() {
 
     <div class="text-sm mb-1 flex justify-between">
       <span>{{ listProgressText }}</span>
-      <button>
+      <button @click="handleClickToggleHideChecked">
         Hide checked
       </button>
     </div>
