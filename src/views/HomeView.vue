@@ -5,9 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import CategoryButton from '@/components/shopping-list/header/item-category/CategoryButton.vue';
+import { useShoppingListStore } from '@/stores/shoppingList';
 
+//Get shopping Items
+const shoppingListStore = useShoppingListStore()
+
+onMounted(() => {
+  shoppingListStore.items = GROCERIES
+})
 
 ////CheckItem
 const selectMultipleIds = useSelectMultipleIds()
@@ -21,17 +28,25 @@ function itemIsChecked(itemId: string) {
 }
 
 const listProgressText = computed(() => {
-  if (selectMultipleIds.selectedIds.value.length === GROCERIES.length) {
-    return `(${selectMultipleIds.selectedIds.value.length}/${GROCERIES.length}) - Completed`
+  if (!shoppingListStore.items) {
+    return
   }
 
-  return `(${selectMultipleIds.selectedIds.value.length}/${GROCERIES.length})`
+  if (selectMultipleIds.selectedIds.value.length === shoppingListStore.items.length) {
+    return `(${selectMultipleIds.selectedIds.value.length}/${shoppingListStore.items.length}) - Completed`
+  }
+
+  return `(${selectMultipleIds.selectedIds.value.length}/${shoppingListStore.items.length})`
 })
 
 
 //// ItemCategory
 const itemCategories = computed(() => {
-  const allLabels = GROCERIES.map(item => item.label)
+  if (!shoppingListStore.items) {
+    return
+  }
+
+  const allLabels = shoppingListStore.items.map(item => item.label)
 
   return [...new Set(allLabels)]
 })
@@ -83,8 +98,8 @@ const itemCategories = computed(() => {
         </header>
 
         <ul class="space-y-1.5">
-          <BaseItem v-for="item in GROCERIES" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
-            @on-toggle-check="handleOnToggleCheck" />
+          <BaseItem v-for="item in shoppingListStore.items" :key="item.id" :item="item"
+            :is-checked="itemIsChecked(item.id)" @on-toggle-check="handleOnToggleCheck" />
         </ul>
 
       </div>
