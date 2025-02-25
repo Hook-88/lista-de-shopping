@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
+import { computed } from 'vue';
 
 const selectMultipleIds = useSelectMultipleIds()
 
@@ -15,6 +16,14 @@ function handleOnToggleCheck(itemId: string) {
 function itemIsChecked(itemId: string) {
   return selectMultipleIds.selectedIds.value.includes(itemId)
 }
+
+const listProgressText = computed(() => {
+  if (selectMultipleIds.selectedIds.value.length === GROCERIES.length) {
+    return `(${selectMultipleIds.selectedIds.value.length}/${GROCERIES.length}) - Completed`
+  }
+
+  return `(${selectMultipleIds.selectedIds.value.length}/${GROCERIES.length})`
+})
 
 </script>
 
@@ -37,6 +46,7 @@ function itemIsChecked(itemId: string) {
     <main class="grow px-2 flex flex-col gap-4">
 
       <div>
+
         <header>
           <ul class="flex gap-2 mb-2">
             <li>
@@ -52,7 +62,7 @@ function itemIsChecked(itemId: string) {
           </ul>
 
           <div class="text-sm mb-1 flex justify-between">
-            <span>(4/12)</span>
+            <span>{{ listProgressText }}</span>
             <button>
               Hide checked
             </button>
