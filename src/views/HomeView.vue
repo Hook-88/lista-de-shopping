@@ -10,6 +10,7 @@ import ToggleNavButton from '@/components/main-nav/ToggleNavButton.vue';
 import ListHeader from '@/components/shopping-list/header/ListHeader.vue';
 import AddItemButton from '@/components/shopping-list/add-item/AddItemButton.vue';
 import PageFooter from '@/components/page-footer/PageFooter.vue';
+import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 
 //Get shopping Items
 const shoppingListStore = useShoppingListStore()
@@ -41,6 +42,27 @@ const itemCategories = computed(() => {
   return [...new Set(allLabels)]
 })
 
+function handleOnChangeCategory(category: string | null) {
+  if (!category) {
+    selectSingleId.clearSelection()
+    return
+  }
+
+  selectSingleId.selectId(category)
+
+}
+
+const selectSingleId = useSelectSingleId()
+
+const displayItems = computed(() => {
+
+  if (selectSingleId.selectedId.value) {
+    return shoppingListStore.items?.filter(shoppingItem => shoppingItem.label === selectSingleId.selectedId.value)
+  }
+
+  return shoppingListStore.items
+})
+
 
 </script>
 
@@ -63,11 +85,12 @@ const itemCategories = computed(() => {
 
       <div v-if="shoppingListStore.items && itemCategories">
         <ListHeader :item-categories="itemCategories" :list-length="shoppingListStore.items.length"
-          :checked-items-length="selectMultipleIds.selectedIds.value.length" />
+          :checked-items-length="selectMultipleIds.selectedIds.value.length"
+          @on-change-category="handleOnChangeCategory" />
 
         <ul class="space-y-1.5">
-          <BaseItem v-for="item in shoppingListStore.items" :key="item.id" :item="item"
-            :is-checked="itemIsChecked(item.id)" @on-toggle-check="handleOnToggleCheck" />
+          <BaseItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
+            @on-toggle-check="handleOnToggleCheck" />
         </ul>
 
       </div>

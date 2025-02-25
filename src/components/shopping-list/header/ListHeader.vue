@@ -11,6 +11,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const emit = defineEmits<{
+  (e: 'on-change-category', category: string | null): void
+}>()
+
 const listProgressText = computed(() => {
 
   if (props.checkedItemsLength === props.listLength) {
@@ -24,6 +28,7 @@ const selectSingleId = useSelectSingleId()
 
 function handleClickCategory(category: string) {
   selectSingleId.selectId(category)
+  emit('on-change-category', selectSingleId.selectedId.value)
 }
 
 function categoryIsSelected(category: string) {
@@ -32,6 +37,7 @@ function categoryIsSelected(category: string) {
 
 function handleClickCategoryAll() {
   selectSingleId.clearSelection()
+  emit('on-change-category', selectSingleId.selectedId.value)
 }
 
 </script>
