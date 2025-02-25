@@ -6,6 +6,17 @@ import { RouterLink } from 'vue-router';
 import { GROCERIES } from '@/data/data';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
+import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
+
+const selectMultipleIds = useSelectMultipleIds()
+
+function handleOnToggleCheck(itemId: string) {
+  selectMultipleIds.toggleSelectId(itemId)
+}
+
+function itemIsChecked(itemId: string) {
+  return selectMultipleIds.selectedIds.value.includes(itemId)
+}
 
 </script>
 
@@ -52,7 +63,8 @@ import BaseItem from '@/components/shopping-list/BaseItem.vue';
         </header>
 
         <ul class="space-y-1.5">
-          <BaseItem v-for="item in GROCERIES" :key="item.id" :item="item" :is-checked="false" />
+          <BaseItem v-for="item in GROCERIES" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
+            @on-toggle-check="handleOnToggleCheck" />
         </ul>
 
       </div>

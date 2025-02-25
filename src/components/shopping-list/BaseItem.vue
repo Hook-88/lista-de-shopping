@@ -11,6 +11,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const emit = defineEmits<{
+  (e: 'on-toggle-check', itemId: string): void
+}>()
+
 const itemClassName = computed(() => {
 
   if (props.isChecked) {
@@ -20,10 +24,14 @@ const itemClassName = computed(() => {
   return 'border-ash/20'
 })
 
+function handleClickToggleCheckItem() {
+  emit('on-toggle-check', props.item.id)
+}
+
 </script>
 
 <template>
-  <li class="pl-2 border rounded flex items-center" :class="itemClassName">
+  <li class="pl-2 border rounded flex items-center" :class="itemClassName" @click="handleClickToggleCheckItem">
     {{ item.name }}
     <button class="p-2 ml-auto">
       <FontAwesomeIcon :icon="faCircle" />
