@@ -3,7 +3,7 @@ import MainNav from '@/components/main-nav/MainNav.vue';
 import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { useShoppingListStore } from '@/stores/shoppingList';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import ToggleNavButton from '@/components/main-nav/ToggleNavButton.vue';
@@ -64,7 +64,12 @@ function handleClickToggleHideChecked() {
 
 
 //Delete checked Items
+const confirmDeleteDialogRef = useTemplateRef('confirm-delete-dialog')
 
+function handleClickDeleteCheckedItems() {
+  console.log('delete: ', selectMultipleIds.selectedIds.value)
+  confirmDeleteDialogRef.value?.showModal()
+}
 
 
 
@@ -121,7 +126,7 @@ const displayItems = computed(() => {
 
 
       <button class="p-2 rounded border border-ash/20 bg-red-900 disabled:bg-red-900/50 disabled:text-white/40"
-        :disabled="selectMultipleIds.selectedIds.value.length === 0">
+        :disabled="selectMultipleIds.selectedIds.value.length === 0" @click="handleClickDeleteCheckedItems">
         Delete checked items
       </button>
 
@@ -129,5 +134,32 @@ const displayItems = computed(() => {
     </main>
 
     <PageFooter />
+
+    <dialog ref="confirm-delete-dialog"
+      class="open:flex flex-col min-w-screen bg-obsidian text-ash backdrop:backdrop-blur-sm border-b border-ash/20">
+
+      <header class="text-xl p-2 border-b border-ash/20">
+        <h1>Delete these items:</h1>
+      </header>
+
+      <main class="p-2 border-b border-ash/20">
+        <ul>
+          <li v-for="id in selectMultipleIds.selectedIds.value" :key="id">
+            {{shoppingListStore.items?.find(shoppingItem => shoppingItem.id === id)?.name}}
+          </li>
+        </ul>
+      </main>
+
+      <footer class="flex gap-2 p-2">
+        <button class="p-2 rounded border border-ash/20 grow bg-sky-800">
+          Confirm
+        </button>
+
+        <button class="p-2 rounded border border-ash/20 bg-red-900">
+          Cancel
+        </button>
+      </footer>
+    </dialog>
+
   </div>
 </template>
