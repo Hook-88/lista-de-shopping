@@ -26,6 +26,8 @@ import { RouterLink } from 'vue-router';
       <h1 class="text-xl">this is home</h1>
     </main>
 
-    <footer>here the footer</footer>
+    <footer class="py-2 text-center text-sm">
+      &copy; 2025 Hook-88
+    </footer>
   </div>
 </template>
