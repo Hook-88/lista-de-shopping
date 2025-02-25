@@ -11,6 +11,7 @@ import ListHeader from '@/components/shopping-list/header/ListHeader.vue';
 import AddItemButton from '@/components/shopping-list/add-item/AddItemButton.vue';
 import PageFooter from '@/components/page-footer/PageFooter.vue';
 import { useCategoryFilter } from '@/components/shopping-list/filter/catergoryFilter';
+import BaseButton from '@/components/buttons/BaseButton.vue';
 
 //Get shopping Items
 const shoppingListStore = useShoppingListStore()
@@ -69,6 +70,10 @@ const confirmDeleteDialogRef = useTemplateRef('confirm-delete-dialog')
 function handleClickDeleteCheckedItems() {
   console.log('delete: ', selectMultipleIds.selectedIds.value)
   confirmDeleteDialogRef.value?.showModal()
+}
+
+function handleClickCancelDelete() {
+  confirmDeleteDialogRef.value?.close()
 }
 
 
@@ -151,13 +156,14 @@ const displayItems = computed(() => {
       </main>
 
       <footer class="flex gap-2 p-2">
-        <button class="p-2 rounded border border-ash/20 grow bg-sky-800">
+        <BaseButton button-type="action" class="grow">
           Confirm
-        </button>
+        </BaseButton>
 
-        <button class="p-2 rounded border border-ash/20 bg-red-900">
+        <BaseButton button-type="danger" @click="handleClickCancelDelete">
           Cancel
-        </button>
+        </BaseButton>
+
       </footer>
     </dialog>
 
