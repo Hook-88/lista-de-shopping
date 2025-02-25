@@ -2,9 +2,7 @@
 import MainNav from '@/components/main-nav/MainNav.vue';
 import { faCaretDown, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { RouterLink } from 'vue-router';
 import { GROCERIES } from '@/data/data';
-import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 

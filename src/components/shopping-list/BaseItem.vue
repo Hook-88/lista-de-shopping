@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import type { ShoppingItemInterface } from '@/types/types';
 import { computed } from 'vue';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   item: ShoppingItemInterface
@@ -33,7 +34,10 @@ function handleClickToggleCheckItem() {
 <template>
   <li class="pl-2 border rounded flex items-center" :class="itemClassName" @click="handleClickToggleCheckItem">
     {{ item.name }}
-    <button class="p-2 ml-auto">
+    <span class="p-2 ml-auto" v-if="isChecked">
+      <FontAwesomeIcon :icon="faCheck" />
+    </span>
+    <button class="p-2 ml-auto" v-else>
       <FontAwesomeIcon :icon="faCircle" />
     </button>
   </li>
