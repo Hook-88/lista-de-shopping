@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import MainNav from '@/components/main-nav/MainNav.vue';
-import { faAngleRight, faCaretDown, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { RouterLink } from 'vue-router';
+import { GROCERIES } from '@/data/data';
 
 </script>
 
@@ -23,6 +24,9 @@ import { RouterLink } from 'vue-router';
     </header>
 
     <main class="grow px-2">
+      <ul>
+        <li v-for="item in GROCERIES" :key="item.id">{{ item.name }}</li>
+      </ul>
 
     </main>
 
