@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-obsidian: #181818;
+  --color-ash: #cccccc;
+}
+
+body {
+  background-color: #181818;
+  color: #cccccc;
+}
