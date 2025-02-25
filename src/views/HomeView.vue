@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { RouterLink } from 'vue-router';
 import { GROCERIES } from '@/data/data';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
+import BaseItem from '@/components/shopping-list/BaseItem.vue';
 
 </script>
 
@@ -51,12 +52,7 @@ import { faCircle } from '@fortawesome/free-regular-svg-icons';
         </header>
 
         <ul class="space-y-1.5">
-          <li v-for="item in GROCERIES" :key="item.id" class="pl-2 border border-ash/20 rounded flex items-center">
-            {{ item.name }}
-            <button class="p-2 ml-auto">
-              <FontAwesomeIcon :icon="faCircle" />
-            </button>
-          </li>
+          <BaseItem v-for="item in GROCERIES" :key="item.id" :item="item" :is-checked="false" />
         </ul>
 
       </div>
