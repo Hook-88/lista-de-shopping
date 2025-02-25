@@ -3,7 +3,7 @@ import MainNav from '@/components/main-nav/MainNav.vue';
 import { GROCERIES } from '@/data/data';
 import BaseItem from '@/components/shopping-list/BaseItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
-import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useShoppingListStore } from '@/stores/shoppingList';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import ToggleNavButton from '@/components/main-nav/ToggleNavButton.vue';
@@ -12,6 +12,8 @@ import AddItemButton from '@/components/shopping-list/add-item/AddItemButton.vue
 import PageFooter from '@/components/page-footer/PageFooter.vue';
 import { useCategoryFilter } from '@/components/shopping-list/filter/catergoryFilter';
 import BaseButton from '@/components/buttons/BaseButton.vue';
+import BaseModal from '@/components/modal/BaseModal.vue';
+import ConfirmDeleteModal from '@/components/shopping-list/delete-checked-items/ConfirmDeleteModal.vue';
 
 //Get shopping Items
 const shoppingListStore = useShoppingListStore()
@@ -65,21 +67,32 @@ function handleClickToggleHideChecked() {
 
 
 //Delete checked Items
-const confirmDeleteDialogRef = useTemplateRef('confirm-delete-dialog')
+const confirmDeleteModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
 function handleClickDeleteCheckedItems() {
-  console.log('delete: ', selectMultipleIds.selectedIds.value)
-  confirmDeleteDialogRef.value?.showModal()
+  confirmDeleteModalRef.value?.openModal()
 }
 
-function handleClickCancelDelete() {
-  confirmDeleteDialogRef.value?.close()
+const itemsToDelete = computed(() => {
+  return shoppingListStore.items?.filter(shoppingItem => {
+
+    if (selectMultipleIds.selectedIds.value.includes(shoppingItem.id)) {
+
+      return shoppingItem
+    }
+  }).map(item => item.name)
+})
+
+function handleOnCancelDelete() {
+  confirmDeleteModalRef.value?.closeModal()
 }
 
-function handleClickConfirmDelete() {
+function handleOnConfirmDelete() {
   shoppingListStore.deleteSelectedItems(selectMultipleIds.selectedIds.value)
   selectMultipleIds.clearSelection()
-  confirmDeleteDialogRef.value?.close()
+  categoryFilter.selectCategory.clearSelection()
+  confirmDeleteModalRef.value?.closeModal()
+
 }
 
 
@@ -146,32 +159,10 @@ const displayItems = computed(() => {
 
     <PageFooter />
 
-    <dialog ref="confirm-delete-dialog"
-      class="open:flex flex-col min-w-screen bg-obsidian text-ash backdrop:backdrop-blur-sm border-b border-ash/20">
-
-      <header class="text-xl p-2 border-b border-ash/20">
-        <h1>Delete these items:</h1>
-      </header>
-
-      <main class="p-2 border-b border-ash/20">
-        <ul>
-          <li v-for="id in selectMultipleIds.selectedIds.value" :key="id">
-            {{shoppingListStore.items?.find(shoppingItem => shoppingItem.id === id)?.name}}
-          </li>
-        </ul>
-      </main>
-
-      <footer class="flex gap-2 p-2">
-        <BaseButton button-type="action" class="grow" @click="handleClickConfirmDelete">
-          Confirm
-        </BaseButton>
-
-        <BaseButton button-type="danger" @click="handleClickCancelDelete">
-          Cancel
-        </BaseButton>
-
-      </footer>
-    </dialog>
+    <BaseModal ref="confirmDeleteModalRef">
+      <ConfirmDeleteModal :items-to-delete="itemsToDelete" @on-cancel-delete="handleOnCancelDelete"
+        @on-confirm-delete="handleOnConfirmDelete" />
+    </BaseModal>
 
   </div>
 </template>
