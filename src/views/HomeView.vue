@@ -14,6 +14,9 @@ import { useCategoryFilter } from '@/components/shopping-list/filter/catergoryFi
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmDeleteModal from '@/components/shopping-list/delete-checked-items/ConfirmDeleteModal.vue';
+import BaseInput from '@/components/inputs/BaseInput.vue';
+import ItemFrom from '@/components/shopping-list/add-item/ItemForm.vue';
+import ItemForm from '@/components/shopping-list/add-item/ItemForm.vue';
 
 //Get shopping Items
 const shoppingListStore = useShoppingListStore()
@@ -179,28 +182,23 @@ const displayItems = computed(() => {
     </BaseModal>
 
     <BaseModal ref="addnewItemModalRef">
-
-      <form>
+      <ItemForm />
+      <!-- <form>
         <div class="p-2 flex flex-col gap-2 pb-3">
-
-          <div>
-            <label>Name:</label>
-            <br>
-            <input type="text" placeholder="item name..." class="w-full px-2 py-1 bg-ash/10 rounded">
-          </div>
+          <BaseInput label="Name" />
 
           <div class="flex gap-2">
 
             <div>
               <label>Quantity:</label>
               <br>
-              <input type="number" placeholder="Quantity..." class="w-full px-2 py-1 bg-ash/10 rounded">
+              <input type="number" placeholder="Quantity..." class="w-full px-2 py-1 bg-ash/10 rounded" required>
             </div>
 
             <div>
               <label>Unit:</label>
               <br>
-              <input type="text" placeholder="Unit..." class="w-full px-2 py-1 bg-ash/10 rounded">
+              <input type="text" placeholder="Unit..." class="w-full px-2 py-1 bg-ash/10 rounded" required>
             </div>
 
           </div>
@@ -219,7 +217,7 @@ const displayItems = computed(() => {
           <BaseButton button-type="danger">Cancel</BaseButton>
         </div>
 
-      </form>
+      </form> -->
 
 
     </BaseModal>
