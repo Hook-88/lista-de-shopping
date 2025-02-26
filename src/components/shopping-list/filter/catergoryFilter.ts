@@ -8,7 +8,7 @@ export const useCategoryFilter = () => {
 
   const itemCategories = computed(() => {
     if (!shoppingListStore.items) {
-      return
+      return []
     }
 
     const allLabels = shoppingListStore.items.map((item) => item.label)

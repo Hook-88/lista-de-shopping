@@ -133,26 +133,33 @@ const displayItems = computed(() => {
 
     </PageHeader>
 
-    <main class="grow px-2 flex flex-col gap-4">
+    <main class="grow px-2 flex flex-col" v-if="shoppingListStore.items">
+      <BaseButton button-type="action" v-if="shoppingListStore.items.length === 0">
+        Add item
+      </BaseButton>
 
-      <div v-if="shoppingListStore.items && categoryFilter.itemCategories.value">
-        <ListHeader :item-categories="categoryFilter.itemCategories.value" :list-length="shoppingListStore.items.length"
-          :checked-items-length="selectMultipleIds.selectedIds.value.length"
-          @on-change-category="handleOnChangeCategory" @on-toggle-hide-checked="handleClickToggleHideChecked"
-          :hide-checked-items="hideCheckedItems" />
+      <div v-else class="flex flex-col gap-4">
+        <div>
+          <ListHeader :item-categories="categoryFilter.itemCategories.value"
+            :list-length="shoppingListStore.items.length"
+            :checked-items-length="selectMultipleIds.selectedIds.value.length"
+            @on-change-category="handleOnChangeCategory" @on-toggle-hide-checked="handleClickToggleHideChecked"
+            :hide-checked-items="hideCheckedItems" />
 
-        <ul class="space-y-1.5">
-          <BaseItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
-            @on-toggle-check="handleOnToggleCheck" />
-        </ul>
+          <ul class="space-y-1.5">
+            <BaseItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
+              @on-toggle-check="handleOnToggleCheck" />
+          </ul>
+
+        </div>
+
+
+        <button class="p-2 rounded border border-ash/20 bg-red-900 disabled:bg-red-900/50 disabled:text-white/40"
+          :disabled="selectMultipleIds.selectedIds.value.length === 0" @click="handleClickDeleteCheckedItems">
+          Delete checked items
+        </button>
 
       </div>
-
-
-      <button class="p-2 rounded border border-ash/20 bg-red-900 disabled:bg-red-900/50 disabled:text-white/40"
-        :disabled="selectMultipleIds.selectedIds.value.length === 0" @click="handleClickDeleteCheckedItems">
-        Delete checked items
-      </button>
 
 
     </main>
