@@ -96,6 +96,13 @@ function handleOnConfirmDelete() {
 }
 
 
+////Add new item
+const addnewItemModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
+
+function handleClickAddNewItem() {
+  addnewItemModalRef.value?.openModal()
+}
+
 
 //Items to display
 const displayItems = computed(() => {
@@ -129,7 +136,7 @@ const displayItems = computed(() => {
 
       <MainNav />
 
-      <AddItemButton />
+      <AddItemButton @click="handleClickAddNewItem" />
 
     </PageHeader>
 
@@ -169,6 +176,52 @@ const displayItems = computed(() => {
     <BaseModal ref="confirmDeleteModalRef">
       <ConfirmDeleteModal :items-to-delete="itemsToDelete" @on-cancel-delete="handleOnCancelDelete"
         @on-confirm-delete="handleOnConfirmDelete" />
+    </BaseModal>
+
+    <BaseModal ref="addnewItemModalRef">
+
+      <form>
+        <div class="p-2 flex flex-col gap-2 pb-3">
+
+          <div>
+            <label>Name:</label>
+            <br>
+            <input type="text" placeholder="item name..." class="w-full px-2 py-1 bg-ash/10 rounded">
+          </div>
+
+          <div class="flex gap-2">
+
+            <div>
+              <label>Quantity:</label>
+              <br>
+              <input type="number" placeholder="Quantity..." class="w-full px-2 py-1 bg-ash/10 rounded">
+            </div>
+
+            <div>
+              <label>Unit:</label>
+              <br>
+              <input type="text" placeholder="Unit..." class="w-full px-2 py-1 bg-ash/10 rounded">
+            </div>
+
+          </div>
+
+          <div>
+            <label>Label:</label>
+            <br>
+            <input type="text" placeholder="Label..." class="w-full px-2 py-1 bg-ash/10 rounded">
+          </div>
+        </div>
+
+
+
+        <div class="p-2 border-t border-ash/20 flex gap-2">
+          <BaseButton button-type="action" class="grow">Add</BaseButton>
+          <BaseButton button-type="danger">Cancel</BaseButton>
+        </div>
+
+      </form>
+
+
     </BaseModal>
 
   </div>
