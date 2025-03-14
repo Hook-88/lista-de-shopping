@@ -11,7 +11,7 @@ interface FormDataInterface {
 }
 
 const formData = reactive<FormDataInterface>({
-  name: 'test',
+  name: '',
   quantity: 1,
   unit: 'Pieces',
   label: ''
@@ -28,32 +28,20 @@ const formData = reactive<FormDataInterface>({
 
       <div class="flex gap-2">
 
-        <div>
-          <label>Quantity:</label>
-          <br>
-          <input type="number" placeholder="Quantity..." class="w-full px-2 py-1 bg-ash/10 rounded" required>
-        </div>
+        <BaseInput label="Quantity" type="number" v-model="formData.quantity" />
 
-        <div>
-          <label>Unit:</label>
-          <br>
-          <input type="text" placeholder="Unit..." class="w-full px-2 py-1 bg-ash/10 rounded" required>
-        </div>
+        <BaseInput label="Unit" v-model="formData.unit" />
 
       </div>
 
-      <div>
-        <label>Label:</label>
-        <br>
-        <input type="text" placeholder="Label..." class="w-full px-2 py-1 bg-ash/10 rounded">
-      </div>
+      <BaseInput label="Label" v-model="formData.unit" />
     </div>
 
 
 
     <div class="p-2 border-t border-ash/20 flex gap-2">
       <BaseButton button-type="action" class="grow">Add</BaseButton>
-      <BaseButton button-type="danger">Cancel</BaseButton>
+      <BaseButton button-type="danger" type="button">Cancel</BaseButton>
     </div>
 
   </form>
