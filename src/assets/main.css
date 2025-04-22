@@ -1,1 +1,11 @@
 @import 'tailwindcss';
+
+body {
+  background-color: #181818;
+  color: #d1d2d3;
+}
+
+@theme {
+  --color-ivory: #d1d2d3;
+  --color-obsidian: #181818;
+}
