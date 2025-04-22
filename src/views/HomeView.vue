@@ -7,9 +7,19 @@ import IconLink from '@/components/links/IconLink.vue';
 import MainNav from '@/components/main-nav/MainNav.vue';
 import MainNavLink from '@/components/main-nav/MainNavLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
+import { db } from '@/firebase/firebase';
+import type { ShoppingItemInterface } from '@/types/types';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { collection } from 'firebase/firestore';
 import { RouterLink } from 'vue-router';
+import { useCollection, useFirestore } from 'vuefire';
+
+const {
+  data: shoppingList,
+  pending: shoppingListLoading,
+  error: shoppingListError
+} = useCollection<ShoppingItemInterface>(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'))
 
 </script>
 
@@ -38,6 +48,12 @@ import { RouterLink } from 'vue-router';
 
   </PageHeader>
   <main class="p-2">
+    <div v-if="shoppingListLoading">
+      Loading...
+    </div>
+    <ul>
+      <li v-for="item in shoppingList" :key="item.id">{{ item.name }}</li>
+    </ul>
 
   </main>
 </template>
