@@ -2,6 +2,7 @@
 </script>
 
 <template>
+  <header></header>
   <main>
     <h1 class="text-xl">This is home</h1>
   </main>
