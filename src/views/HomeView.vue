@@ -8,6 +8,8 @@ import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
+import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
+import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -24,16 +26,9 @@ const {
 } = useCollection<ShoppingItemInterface>(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'))
 
 // Check item //
-const checkItem = useSelectMultipleIds()
-
-function handleOnToggleCheck(itemId: string) {
-  checkItem.toggleSelect(itemId)
-}
-
-function itemIsChecked(itemId: string) {
-  return checkItem.selection.value.some(selectedId => selectedId === itemId)
-}
+const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem()
 // Check item //
+
 
 // List Progress //
 const listProgressText = computed(() => {
@@ -43,22 +38,16 @@ const listProgressText = computed(() => {
 })
 // List Progress //
 
+
 // List Labels //
 const listLabels = computed(() => {
   return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
 })
 // List Labels //
 
+
 // List filter //
-const selectFilter = useSelectSingleId()
-
-function handleOnSelectLabel(label: string) {
-  selectFilter.selectId(label)
-}
-
-function handleOnClearFilter() {
-  selectFilter.clearSelection()
-}
+const { selectFilter, handleOnClearFilter, handleOnSelectLabel } = useListFilter()
 // List filter //
 
 // Display items //
