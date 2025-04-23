@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ButtonHTMLAttributes } from 'vue';
 
-interface Props extends ButtonHTMLAttributes {
+interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
   isSelected: boolean
 }
 

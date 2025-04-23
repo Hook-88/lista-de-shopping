@@ -5,6 +5,7 @@ import BaseList from '@/components/list/BaseList.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
+import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import type { ShoppingItemInterface } from '@/types/types';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -44,6 +45,34 @@ const listProgressText = computed(() => {
 const listLabels = computed(() => {
   return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
 })
+// List Labels //
+
+// List filter //
+const selectFilter = useSelectSingleId()
+
+function handleClickListFilter(label: string) {
+  selectFilter.selectId(label)
+}
+
+function labelIsSelected(label: string) {
+  return selectFilter.selection.value === label
+}
+
+function handleClickAllLabels() {
+  selectFilter.clearSelection()
+}
+// List filter //
+
+// Display items //
+const displayItems = computed(() => {
+  const selectedFilter = selectFilter.selection.value
+
+  if (selectedFilter) {
+    return shoppingList.value.filter(shoppingItem => shoppingItem.label === selectedFilter)
+  }
+
+  return shoppingList.value
+})
 
 </script>
 
@@ -59,12 +88,12 @@ const listLabels = computed(() => {
       <header>
         <ul class="flex gap-2">
           <li>
-            <FilterButton :is-selected="true">
+            <FilterButton :is-selected="!selectFilter.selection.value" @click="handleClickAllLabels">
               All
             </FilterButton>
           </li>
           <li v-for="(label, index) in listLabels" :key="index">
-            <FilterButton :is-selected="false">
+            <FilterButton :is-selected="labelIsSelected(label)" @click="() => handleClickListFilter(label)">
               {{ label }}
             </FilterButton>
           </li>
@@ -74,7 +103,7 @@ const listLabels = computed(() => {
       </header>
 
       <BaseList>
-        <ShoppingItem v-for="item in shoppingList" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
+        <ShoppingItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
           @on-toggle-check="handleOnToggleCheck" />
       </BaseList>
 
