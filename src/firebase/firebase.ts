@@ -5,12 +5,12 @@ import { initializeApp } from 'firebase/app'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyCgvWRILX6m9R3gmp3WC3YDxqIYU_W7FOQ',
-  authDomain: 'lista-de-shopping-93abe.firebaseapp.com',
-  projectId: 'lista-de-shopping-93abe',
-  storageBucket: 'lista-de-shopping-93abe.firebasestorage.app',
-  messagingSenderId: '457755421337',
-  appId: '1:457755421337:web:51726f954c37e5a5976608',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
 // Initialize Firebase
