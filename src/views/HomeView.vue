@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
+import IconButton from '@/components/buttons/IconButton.vue';
+import IconClose from '@/components/icons/IconClose.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
+import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
@@ -59,6 +62,8 @@ const displayItems = computed(() => {
 
 
 // Delete items //
+const idsToDelete = useSelectMultipleIds()
+
 const checkedItems = computed(() => {
   return shoppingList.value.filter(shoppingItem => {
 
@@ -71,8 +76,18 @@ const checkedItems = computed(() => {
 const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
 function handleClickDeleteCheckedItems() {
+  idsToDelete.setSelection(checkedItems.value.map(checkedItem => checkedItem.id))
   confirmModalRef.value?.openModal()
 }
+
+const itemsTodelete = computed(() => {
+  return checkedItems.value.filter(checkedItem => {
+
+    if (idsToDelete.selection.value.includes(checkedItem.id)) {
+      return checkedItem
+    }
+  })
+})
 
 async function handleOnConfirm() {
   const batch = writeBatch(db)
@@ -88,6 +103,12 @@ async function handleOnConfirm() {
   checkItem.clearSelection()
 }
 // Delete items
+
+
+// Remove item from delete list //
+function handleClickRemoveItemFromList(itemId: string) {
+  idsToDelete.deSelectId(itemId)
+}
 
 </script>
 
@@ -132,8 +153,13 @@ async function handleOnConfirm() {
 
   <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
-    <ul class="space-y-0.5">
-      <li v-for="item in checkedItems" :key="item.id">{{ item.name }}</li>
+    <ul>
+      <li v-for="item in itemsTodelete" :key="item.id" class="flex items-center justify-between">
+        {{ item.name }}
+        <IconButton @click="() => handleClickRemoveItemFromList(item.id)">
+          <IconClose />
+        </IconButton>
+      </li>
     </ul>
   </BaseModal>
 

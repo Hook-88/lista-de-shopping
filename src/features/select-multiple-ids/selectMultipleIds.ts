@@ -24,6 +24,10 @@ export const useSelectMultipleIds = () => {
     selection.value = []
   }
 
+  function setSelection(idArray: string[]) {
+    selection.value = idArray
+  }
+
   return {
     selection,
 
@@ -31,5 +35,6 @@ export const useSelectMultipleIds = () => {
     deSelectId,
     toggleSelect,
     clearSelection,
+    setSelection,
   }
 }
