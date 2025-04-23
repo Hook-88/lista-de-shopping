@@ -8,6 +8,7 @@ import type { ShoppingItemInterface } from '@/types/types';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { collection } from 'firebase/firestore';
+import { computed } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -28,6 +29,12 @@ function itemIsChecked(itemId: string) {
   return checkItem.selection.value.some(selectedId => selectedId === itemId)
 }
 
+const listProgressText = computed(() => {
+  return checkItem.selection.value.length === shoppingList.value.length ?
+    `(${checkItem.selection.value.length}/${shoppingList.value.length}) - Completed` :
+    `(${checkItem.selection.value.length}/${shoppingList.value.length})`
+})
+
 </script>
 
 <template>
@@ -38,10 +45,18 @@ function itemIsChecked(itemId: string) {
       Loading...
     </div>
 
-    <BaseList>
-      <ShoppingItem v-for="item in shoppingList" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
-        @on-toggle-check="handleOnToggleCheck" />
-    </BaseList>
+    <div v-else>
+      <header>
+        <small>{{ listProgressText }}</small>
+      </header>
+
+      <BaseList>
+        <ShoppingItem v-for="item in shoppingList" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
+          @on-toggle-check="handleOnToggleCheck" />
+      </BaseList>
+
+    </div>
+
 
   </main>
 </template>
