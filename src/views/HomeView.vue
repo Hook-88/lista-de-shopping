@@ -1,20 +1,13 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
-import FilterButton from '@/components/buttons/FilterButton.vue';
-import IconButton from '@/components/buttons/IconButton.vue';
-import IconClose from '@/components/icons/IconClose.vue';
 import BaseList from '@/components/list/BaseList.vue';
+import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
-import PageHeader from '@/components/page-header/PageHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
-import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
-import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
-import { faCircle } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { collection, doc, writeBatch } from 'firebase/firestore';
 import { computed, ref } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
@@ -75,17 +68,13 @@ const checkedItems = computed(() => {
   })
 })
 
-const dialogRef = ref<HTMLDialogElement | null>(null)
+const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
 function handleClickDeleteCheckedItems() {
-  dialogRef.value?.showModal()
+  confirmModalRef.value?.openModal()
 }
 
-function handleClickCloseModal() {
-  dialogRef.value?.close()
-}
-
-async function handleClickConfirmDelete() {
+async function handleOnConfirm() {
   const batch = writeBatch(db)
 
   checkedItems.value.forEach(checkedItem => {
@@ -95,9 +84,10 @@ async function handleClickConfirmDelete() {
 
   await batch.commit()
 
-  dialogRef.value?.close()
+  confirmModalRef.value?.closeModal()
   checkItem.clearSelection()
 }
+// Delete items
 
 </script>
 
@@ -109,6 +99,10 @@ async function handleClickConfirmDelete() {
 
     <div v-if="shoppingListLoading">
       Loading...
+    </div>
+
+    <div v-else-if="shoppingListError">
+      {{ shoppingListError.message }}
     </div>
 
     <div v-else>
@@ -126,7 +120,7 @@ async function handleClickConfirmDelete() {
           @on-toggle-check="handleOnToggleCheck" />
       </BaseList>
 
-      <BaseButton variant="danger" class="w-full mt-4 disabled:bg-red-950 disabled:text-ivory/50"
+      <BaseButton variant="danger" class="w-full mt-4 text-lg disabled:bg-red-950 disabled:text-ivory/50"
         :disabled="checkItem.selection.value.length === 0" @click="handleClickDeleteCheckedItems">
         Delete Checked Items
       </BaseButton>
@@ -136,29 +130,11 @@ async function handleClickConfirmDelete() {
 
   </main>
 
-  <dialog class="open:flex flex-col min-w-screen min-h-screen bg-obsidian/50 backdrop-blur-xs text-ivory"
-    ref="dialogRef">
-    <div class="bg-obsidian">
-      <PageHeader class="items-center justify-between">
-        <h1 class="ml-2">
-          Confirm delete items
-        </h1>
-        <IconButton @click="handleClickCloseModal">
-          <IconClose />
-        </IconButton>
-      </PageHeader>
-      <main class="p-2">
-        <h2 class="text-lg">Do you want to delete these items?</h2>
-        <ul>
-          <li v-for="item in checkedItems" :key="item.id">{{ item.name }}</li>
-        </ul>
-      </main>
-
-      <footer class="p-2 border-y border-ivory/20 flex gap-2">
-        <BaseButton variant="action" class="grow" @click="handleClickConfirmDelete">Confirm</BaseButton>
-        <BaseButton variant="danger" @click="handleClickCloseModal">Cancel</BaseButton>
-      </footer>
-    </div>
-  </dialog>
+  <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
+    <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
+    <ul class="space-y-0.5">
+      <li v-for="item in checkedItems" :key="item.id">{{ item.name }}</li>
+    </ul>
+  </BaseModal>
 
 </template>
