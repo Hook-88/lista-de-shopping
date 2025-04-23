@@ -99,7 +99,8 @@ const displayItems = computed(() => {
           @on-toggle-check="handleOnToggleCheck" />
       </BaseList>
 
-      <BaseButton variant="danger" class="w-full mt-4">
+      <BaseButton variant="danger" class="w-full mt-4 disabled:bg-red-950 disabled:text-ivory/50"
+        :disabled="checkItem.selection.value.length === 0">
         Delete Checked Items
       </BaseButton>
 
