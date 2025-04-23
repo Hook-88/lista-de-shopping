@@ -108,6 +108,10 @@ async function handleOnConfirm() {
 // Remove item from delete list //
 function handleClickRemoveItemFromList(itemId: string) {
   idsToDelete.deSelectId(itemId)
+
+  if (idsToDelete.selection.value.length === 0) {
+    confirmModalRef.value?.closeModal()
+  }
 }
 
 </script>
