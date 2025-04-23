@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FilterButton from '@/components/buttons/FilterButton.vue';
 import IconButton from '@/components/buttons/IconButton.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
@@ -57,7 +58,16 @@ const listLabels = computed(() => {
     <div v-else>
       <header>
         <ul class="flex gap-2">
-          <li v-for="(label, index) in listLabels" :key="index">{{ label }}</li>
+          <li>
+            <FilterButton :is-selected="true">
+              All
+            </FilterButton>
+          </li>
+          <li v-for="(label, index) in listLabels" :key="index">
+            <FilterButton :is-selected="false">
+              {{ label }}
+            </FilterButton>
+          </li>
         </ul>
         <br>
         <small>{{ listProgressText }}</small>
