@@ -19,6 +19,7 @@ const {
   error: shoppingListError
 } = useCollection<ShoppingItemInterface>(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'))
 
+// Check item //
 const checkItem = useSelectMultipleIds()
 
 function handleOnToggleCheck(itemId: string) {
@@ -28,11 +29,19 @@ function handleOnToggleCheck(itemId: string) {
 function itemIsChecked(itemId: string) {
   return checkItem.selection.value.some(selectedId => selectedId === itemId)
 }
+// Check item //
 
+// List Progress //
 const listProgressText = computed(() => {
   return checkItem.selection.value.length === shoppingList.value.length ?
     `(${checkItem.selection.value.length}/${shoppingList.value.length}) - Completed` :
     `(${checkItem.selection.value.length}/${shoppingList.value.length})`
+})
+// List Progress //
+
+// List Labels //
+const listLabels = computed(() => {
+  return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
 })
 
 </script>
@@ -47,6 +56,10 @@ const listProgressText = computed(() => {
 
     <div v-else>
       <header>
+        <ul class="flex gap-2">
+          <li v-for="(label, index) in listLabels" :key="index">{{ label }}</li>
+        </ul>
+        <br>
         <small>{{ listProgressText }}</small>
       </header>
 
