@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '@/components/buttons/BaseButton.vue';
 import FilterButton from '@/components/buttons/FilterButton.vue';
 import IconButton from '@/components/buttons/IconButton.vue';
 import BaseList from '@/components/list/BaseList.vue';
@@ -84,6 +85,7 @@ const displayItems = computed(() => {
     </div>
 
     <div v-else>
+
       <header>
         <ShoppingListFilter :list-labels="listLabels" :selected-label="selectFilter.selection.value"
           @on-clear-filter="handleOnClearFilter" @on-select-label="handleOnSelectLabel" />
@@ -96,6 +98,10 @@ const displayItems = computed(() => {
         <ShoppingItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
           @on-toggle-check="handleOnToggleCheck" />
       </BaseList>
+
+      <BaseButton variant="danger" class="w-full mt-4">
+        Delete Checked Items
+      </BaseButton>
 
     </div>
 
