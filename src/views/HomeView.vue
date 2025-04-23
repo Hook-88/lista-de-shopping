@@ -2,8 +2,10 @@
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import FilterButton from '@/components/buttons/FilterButton.vue';
 import IconButton from '@/components/buttons/IconButton.vue';
+import IconClose from '@/components/icons/IconClose.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
+import PageHeader from '@/components/page-header/PageHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
@@ -60,6 +62,18 @@ const displayItems = computed(() => {
 
   return shoppingList.value
 })
+// Display items //
+
+
+// Delete items //
+const checkedItems = computed(() => {
+  return shoppingList.value.filter(shoppingItem => {
+
+    if (checkItem.selection.value.some(checkedId => checkedId === shoppingItem.id)) {
+      return shoppingItem
+    }
+  })
+})
 
 </script>
 
@@ -97,4 +111,29 @@ const displayItems = computed(() => {
 
 
   </main>
+
+  <dialog open class="open:flex flex-col min-w-screen min-h-screen bg-obsidian/50 backdrop-blur-xs text-ivory">
+    <div class="bg-obsidian">
+      <PageHeader class="items-center justify-between">
+        <h1 class="ml-2">
+          Confirm delete items
+        </h1>
+        <IconButton>
+          <IconClose />
+        </IconButton>
+      </PageHeader>
+      <main class="p-2">
+        <h2 class="text-lg">Do you want to delete these items?</h2>
+        <ul>
+          <li v-for="item in checkedItems" :key="item.id">{{ item.name }}</li>
+        </ul>
+      </main>
+
+      <footer class="p-2 border-y border-ivory/20 flex gap-2">
+        <BaseButton variant="action" class="grow">Confirm</BaseButton>
+        <BaseButton variant="danger">Cancel</BaseButton>
+      </footer>
+    </div>
+  </dialog>
+
 </template>

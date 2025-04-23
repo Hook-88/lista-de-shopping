@@ -13,7 +13,7 @@ defineProps<Props>()
 <template>
   <button class="px-2 py-1 rounded-sm border border-ivory/20" :class="{
     'bg-red-900': variant === 'danger',
-    'bg-sky-700': variant === 'action'
+    'bg-sky-800': variant === 'action'
   }">
     <slot></slot>
   </button>
