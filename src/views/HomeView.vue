@@ -15,8 +15,8 @@ import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { collection } from 'firebase/firestore';
-import { computed } from 'vue';
+import { collection, doc, writeBatch } from 'firebase/firestore';
+import { computed, ref } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -75,6 +75,30 @@ const checkedItems = computed(() => {
   })
 })
 
+const dialogRef = ref<HTMLDialogElement | null>(null)
+
+function handleClickDeleteCheckedItems() {
+  dialogRef.value?.showModal()
+}
+
+function handleClickCloseModal() {
+  dialogRef.value?.close()
+}
+
+async function handleClickConfirmDelete() {
+  const batch = writeBatch(db)
+
+  checkedItems.value.forEach(checkedItem => {
+    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', checkedItem.id)
+    batch.delete(docRef)
+  })
+
+  await batch.commit()
+
+  dialogRef.value?.close()
+  checkItem.clearSelection()
+}
+
 </script>
 
 <template>
@@ -103,7 +127,7 @@ const checkedItems = computed(() => {
       </BaseList>
 
       <BaseButton variant="danger" class="w-full mt-4 disabled:bg-red-950 disabled:text-ivory/50"
-        :disabled="checkItem.selection.value.length === 0">
+        :disabled="checkItem.selection.value.length === 0" @click="handleClickDeleteCheckedItems">
         Delete Checked Items
       </BaseButton>
 
@@ -112,13 +136,14 @@ const checkedItems = computed(() => {
 
   </main>
 
-  <dialog open class="open:flex flex-col min-w-screen min-h-screen bg-obsidian/50 backdrop-blur-xs text-ivory">
+  <dialog class="open:flex flex-col min-w-screen min-h-screen bg-obsidian/50 backdrop-blur-xs text-ivory"
+    ref="dialogRef">
     <div class="bg-obsidian">
       <PageHeader class="items-center justify-between">
         <h1 class="ml-2">
           Confirm delete items
         </h1>
-        <IconButton>
+        <IconButton @click="handleClickCloseModal">
           <IconClose />
         </IconButton>
       </PageHeader>
@@ -130,8 +155,8 @@ const checkedItems = computed(() => {
       </main>
 
       <footer class="p-2 border-y border-ivory/20 flex gap-2">
-        <BaseButton variant="action" class="grow">Confirm</BaseButton>
-        <BaseButton variant="danger">Cancel</BaseButton>
+        <BaseButton variant="action" class="grow" @click="handleClickConfirmDelete">Confirm</BaseButton>
+        <BaseButton variant="danger" @click="handleClickCloseModal">Cancel</BaseButton>
       </footer>
     </div>
   </dialog>
