@@ -4,6 +4,7 @@ import IconButton from '@/components/buttons/IconButton.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
+import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import type { ShoppingItemInterface } from '@/types/types';
@@ -50,15 +51,11 @@ const listLabels = computed(() => {
 // List filter //
 const selectFilter = useSelectSingleId()
 
-function handleClickListFilter(label: string) {
+function handleOnSelectLabel(label: string) {
   selectFilter.selectId(label)
 }
 
-function labelIsSelected(label: string) {
-  return selectFilter.selection.value === label
-}
-
-function handleClickAllLabels() {
+function handleOnClearFilter() {
   selectFilter.clearSelection()
 }
 // List filter //
@@ -78,7 +75,9 @@ const displayItems = computed(() => {
 
 <template>
   <HomeViewHeader />
+
   <main class="p-2">
+
 
     <div v-if="shoppingListLoading">
       Loading...
@@ -86,20 +85,11 @@ const displayItems = computed(() => {
 
     <div v-else>
       <header>
-        <ul class="flex gap-2">
-          <li>
-            <FilterButton :is-selected="!selectFilter.selection.value" @click="handleClickAllLabels">
-              All
-            </FilterButton>
-          </li>
-          <li v-for="(label, index) in listLabels" :key="index">
-            <FilterButton :is-selected="labelIsSelected(label)" @click="() => handleClickListFilter(label)">
-              {{ label }}
-            </FilterButton>
-          </li>
-        </ul>
-        <br>
+        <ShoppingListFilter :list-labels="listLabels" :selected-label="selectFilter.selection.value"
+          @on-clear-filter="handleOnClearFilter" @on-select-label="handleOnSelectLabel" />
+
         <small>{{ listProgressText }}</small>
+
       </header>
 
       <BaseList>
