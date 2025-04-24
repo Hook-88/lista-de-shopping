@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
-import IconButton from '@/components/buttons/IconButton.vue';
-import IconClose from '@/components/icons/IconClose.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
@@ -25,7 +23,7 @@ const {
 } = useCollection<ShoppingItemInterface>(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'))
 
 // Check item //
-const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem(shoppingList)
+const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem()
 // Check item //
 
 
@@ -65,15 +63,6 @@ const displayItems = computed(() => {
 
 // Delete items //
 const idsToDelete = useSelectMultipleIds()
-
-const checkedItems = computed(() => {
-  return shoppingList.value.filter(shoppingItem => {
-
-    if (checkItem.selection.value.some(checkedId => checkedId === shoppingItem.id)) {
-      return shoppingItem
-    }
-  })
-})
 
 const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
