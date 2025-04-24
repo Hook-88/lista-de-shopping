@@ -4,6 +4,7 @@ import IconAngleLeft from '@/components/icons/IconAngleLeft.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { addDoc, collection } from 'firebase/firestore';
+import { ref } from 'vue';
 import { useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -12,9 +13,21 @@ function handleOnFormSubmit(formData: FormDatatype) {
   addNewDoc(formData)
 }
 
-async function addNewDoc(formData: FormDatatype) {
+const isLoading = ref(false)
+const addingError = ref<Error | null>(null)
 
-  const docRef = await addDoc(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'), formData)
+async function addNewDoc(formData: FormDatatype) {
+  isLoading.value = true
+  addingError.value = null
+
+  try {
+    const docRef = await addDoc(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'), formData)
+  } catch (err) {
+    addingError.value = err as Error
+  } finally {
+    isLoading.value = false
+  }
+
 }
 
 </script>
@@ -34,5 +47,13 @@ async function addNewDoc(formData: FormDatatype) {
   <main>
     <ShoppingItemForm @on-form-submit="handleOnFormSubmit" />
   </main>
+
+  <div v-if="isLoading">
+    Loading....
+  </div>
+
+  <div v-else-if="addingError">
+    Error....
+  </div>
 
 </template>
