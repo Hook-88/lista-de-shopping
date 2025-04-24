@@ -25,7 +25,7 @@ const {
 } = useCollection<ShoppingItemInterface>(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'))
 
 // Check item //
-const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem()
+const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem(shoppingList)
 // Check item //
 
 
@@ -97,8 +97,8 @@ const itemsTodelete = computed(() => {
 async function handleOnConfirm() {
   const batch = writeBatch(db)
 
-  checkedItems.value.forEach(checkedItem => {
-    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', checkedItem.id)
+  idsToDelete.selection.value.forEach(id => {
+    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', id)
     batch.delete(docRef)
   })
 
@@ -106,6 +106,7 @@ async function handleOnConfirm() {
 
   confirmModalRef.value?.closeModal()
   checkItem.clearSelection()
+  idsToDelete.clearSelection()
 }
 // Delete items
 
