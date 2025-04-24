@@ -7,6 +7,7 @@ import BaseInput from '@/components/inputs/BaseInput.vue';
 import TextInput from '@/components/inputs/TextInput.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
+import IsFavoriteButton from '@/features/shopping-list/add-item/components/is-favorite-button/IsFavoriteButton.vue';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -43,9 +44,13 @@ function toggleIsFavorite() {
             <TextInput label="Name" placeholder="Item name..." />
           </div>
 
-          <IconButton type="button" class="self-stretch flex text-2xl mb-0.5 items-end pr-0" @click="toggleIsFavorite">
+          <IsFavoriteButton :is-favorite="itemIsFavorite" class="self-stretch flex text-2xl mb-0.5 items-end pr-0"
+            @click="toggleIsFavorite" />
+
+          <!-- <IconButton type="button" class="self-stretch flex text-2xl mb-0.5 items-end pr-0" @click="toggleIsFavorite">
             <IconStar :variant="itemIsFavorite ? 'solid' : 'regular'" />
-          </IconButton>
+          </IconButton> -->
+
         </div>
 
 
