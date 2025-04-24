@@ -28,7 +28,7 @@ import IconPlus from '@/components/icons/IconPlus.vue';
 
     </MainNav>
 
-    <IconLink to="/" class="ml-auto">
+    <IconLink to="/shopping-list/add-item" class="ml-auto">
       <IconPlus />
     </IconLink>
 
