@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
-import IconButton from '@/components/buttons/IconButton.vue';
 import IconAngleLeft from '@/components/icons/IconAngleLeft.vue';
-import IconStar from '@/components/icons/IconStar.vue';
 import BaseInput from '@/components/inputs/BaseInput.vue';
 import TextInput from '@/components/inputs/TextInput.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import IsFavoriteButton from '@/features/shopping-list/add-item/components/is-favorite-button/IsFavoriteButton.vue';
-import { faStar } from '@fortawesome/free-regular-svg-icons';
-import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { ref } from 'vue';
+import type { ShoppingItemInterface } from '@/types/types';
+import { reactive } from 'vue';
 
-const itemIsFavorite = ref(false)
+type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
 function toggleIsFavorite() {
-  itemIsFavorite.value = !itemIsFavorite.value
+  formData.isFavorite = !formData.isFavorite
 }
 
+const formData = reactive<FormDatatype>({
+  isFavorite: false,
+  label: 'General',
+  name: '',
+  quantity: 1,
+  unit: 'pieces'
+})
 
 </script>
 
@@ -41,15 +44,11 @@ function toggleIsFavorite() {
         <div class="flex">
 
           <div class="flex flex-col grow">
-            <TextInput label="Name" placeholder="Item name..." />
+            <TextInput label="Name" placeholder="Item name..." required />
           </div>
 
-          <IsFavoriteButton :is-favorite="itemIsFavorite" class="self-stretch flex text-2xl mb-0.5 items-end pr-0"
+          <IsFavoriteButton :is-favorite="formData.isFavorite" class="self-stretch flex text-2xl mb-0.5 items-end pr-0"
             @click="toggleIsFavorite" />
-
-          <!-- <IconButton type="button" class="self-stretch flex text-2xl mb-0.5 items-end pr-0" @click="toggleIsFavorite">
-            <IconStar :variant="itemIsFavorite ? 'solid' : 'regular'" />
-          </IconButton> -->
 
         </div>
 
@@ -58,18 +57,18 @@ function toggleIsFavorite() {
         <div class="flex gap-2">
 
           <div class="flex flex-col w-20">
-            <BaseInput label="Quantity" type="number" class="px-2 py-1 rounded bg-ivory/10" />
+            <BaseInput label="Quantity" type="number" class="px-2 py-1 rounded bg-ivory/10" required />
           </div>
 
           <div class="flex flex-col grow">
-            <TextInput label="Unit" placeholder="Item unit..." class="w-full" />
+            <TextInput label="Unit" placeholder="Item unit..." class="w-full" required />
           </div>
         </div>
 
 
 
         <div class="flex flex-col grow">
-          <TextInput label="Label" placeholder="Item label..." class="w-full" />
+          <TextInput label="Label" placeholder="Item label..." class="w-full" required />
         </div>
 
 
