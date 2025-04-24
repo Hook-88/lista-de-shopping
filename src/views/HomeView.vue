@@ -64,27 +64,10 @@ const displayItems = computed(() => {
 // Delete items //
 const { idsToDelete, confirmModalRef, itemsTodelete, handleOnRemoveFromList } = useDeleteItems(shoppingList)
 
-
-// const idsToDelete = useSelectMultipleIds()
-
-// const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
-
 function handleClickDeleteCheckedItems() {
   idsToDelete.setSelection(checkItem.selection.value)
   confirmModalRef.value?.openModal()
 }
-
-// const itemsTodelete = computed(() => {
-//   const items = shoppingList.value.filter(shoppingItem => {
-
-//     if (idsToDelete.selection.value.includes(shoppingItem.id)) {
-
-//       return shoppingItem
-//     }
-//   })
-
-//   return items
-// })
 
 async function handleOnConfirm() {
   const batch = writeBatch(db)
@@ -102,17 +85,6 @@ async function handleOnConfirm() {
 }
 // Delete items
 
-
-// Remove item from delete list //
-// function handleOnRemoveFromList(itemId: string) {
-//   idsToDelete.deSelectId(itemId)
-
-//   if (idsToDelete.selection.value.length === 0) {
-//     confirmModalRef.value?.closeModal()
-//   }
-// }
-
-// Remove item from delete list //
 
 </script>
 
