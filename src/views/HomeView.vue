@@ -5,13 +5,13 @@ import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
-import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
+import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItems';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -62,26 +62,29 @@ const displayItems = computed(() => {
 
 
 // Delete items //
-const idsToDelete = useSelectMultipleIds()
+const { idsToDelete, confirmModalRef, itemsTodelete, handleOnRemoveFromList } = useDeleteItems(shoppingList)
 
-const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
+
+// const idsToDelete = useSelectMultipleIds()
+
+// const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
 function handleClickDeleteCheckedItems() {
   idsToDelete.setSelection(checkItem.selection.value)
   confirmModalRef.value?.openModal()
 }
 
-const itemsTodelete = computed(() => {
-  const items = shoppingList.value.filter(shoppingItem => {
+// const itemsTodelete = computed(() => {
+//   const items = shoppingList.value.filter(shoppingItem => {
 
-    if (idsToDelete.selection.value.includes(shoppingItem.id)) {
+//     if (idsToDelete.selection.value.includes(shoppingItem.id)) {
 
-      return shoppingItem
-    }
-  })
+//       return shoppingItem
+//     }
+//   })
 
-  return items
-})
+//   return items
+// })
 
 async function handleOnConfirm() {
   const batch = writeBatch(db)
@@ -101,13 +104,13 @@ async function handleOnConfirm() {
 
 
 // Remove item from delete list //
-function handleOnRemoveFromList(itemId: string) {
-  idsToDelete.deSelectId(itemId)
+// function handleOnRemoveFromList(itemId: string) {
+//   idsToDelete.deSelectId(itemId)
 
-  if (idsToDelete.selection.value.length === 0) {
-    confirmModalRef.value?.closeModal()
-  }
-}
+//   if (idsToDelete.selection.value.length === 0) {
+//     confirmModalRef.value?.closeModal()
+//   }
+// }
 
 // Remove item from delete list //
 
@@ -155,14 +158,6 @@ function handleOnRemoveFromList(itemId: string) {
   <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
     <DeleteList :items="itemsTodelete" @on-remove-from-list="handleOnRemoveFromList" />
-    <!-- <ul>
-      <li v-for="item in itemsTodelete" :key="item.id" class="flex items-center justify-between">
-        {{ item.name }}
-        <IconButton @click="() => handleClickRemoveItemFromList(item.id)">
-          <IconClose />
-        </IconButton>
-      </li>
-    </ul> -->
   </BaseModal>
 
 </template>

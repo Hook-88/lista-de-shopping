@@ -1,30 +1,38 @@
-import { computed, ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds'
 import BaseModal from '@/components/modal/BaseModal.vue'
 import type { ShoppingItemInterface } from '@/types/types'
 
-export const useDeleteItems = (checkedItems: ShoppingItemInterface[]) => {
+export const useDeleteItems = (shoppingList: Ref<ShoppingItemInterface[]>) => {
+  // Delete items //
   const idsToDelete = useSelectMultipleIds()
 
   const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
-  function handleClickDeleteCheckedItems() {
-    idsToDelete.setSelection(checkedItems.map((checkedItem) => checkedItem.id))
-    confirmModalRef.value?.openModal()
-  }
-
   const itemsTodelete = computed(() => {
-    return checkedItems.filter((checkedItem) => {
-      if (idsToDelete.selection.value.includes(checkedItem.id)) {
-        return checkedItem
+    const items = shoppingList.value.filter((shoppingItem) => {
+      if (idsToDelete.selection.value.includes(shoppingItem.id)) {
+        return shoppingItem
       }
     })
+
+    return items
   })
+  // Delete items
+
+  // Remove item from delete list //
+  function handleOnRemoveFromList(itemId: string) {
+    idsToDelete.deSelectId(itemId)
+
+    if (idsToDelete.selection.value.length === 0) {
+      confirmModalRef.value?.closeModal()
+    }
+  }
 
   return {
     idsToDelete,
     confirmModalRef,
     itemsTodelete,
-    handleClickDeleteCheckedItems,
+    handleOnRemoveFromList,
   }
 }
