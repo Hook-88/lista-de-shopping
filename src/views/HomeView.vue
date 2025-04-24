@@ -9,6 +9,7 @@ import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
+import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { collection, doc, writeBatch } from 'firebase/firestore';
@@ -48,6 +49,7 @@ const listLabels = computed(() => {
 const { selectFilter, handleOnClearFilter, handleOnSelectLabel } = useListFilter()
 // List filter //
 
+
 // Display items //
 const displayItems = computed(() => {
   const selectedFilter = selectFilter.selection.value
@@ -76,17 +78,20 @@ const checkedItems = computed(() => {
 const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
 function handleClickDeleteCheckedItems() {
-  idsToDelete.setSelection(checkedItems.value.map(checkedItem => checkedItem.id))
+  idsToDelete.setSelection(checkItem.selection.value)
   confirmModalRef.value?.openModal()
 }
 
 const itemsTodelete = computed(() => {
-  return checkedItems.value.filter(checkedItem => {
+  const items = shoppingList.value.filter(shoppingItem => {
 
-    if (idsToDelete.selection.value.includes(checkedItem.id)) {
-      return checkedItem
+    if (idsToDelete.selection.value.includes(shoppingItem.id)) {
+
+      return shoppingItem
     }
   })
+
+  return items
 })
 
 async function handleOnConfirm() {
@@ -106,13 +111,15 @@ async function handleOnConfirm() {
 
 
 // Remove item from delete list //
-function handleClickRemoveItemFromList(itemId: string) {
+function handleOnRemoveFromList(itemId: string) {
   idsToDelete.deSelectId(itemId)
 
   if (idsToDelete.selection.value.length === 0) {
     confirmModalRef.value?.closeModal()
   }
 }
+
+// Remove item from delete list //
 
 </script>
 
@@ -157,14 +164,15 @@ function handleClickRemoveItemFromList(itemId: string) {
 
   <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
-    <ul>
+    <DeleteList :items="itemsTodelete" @on-remove-from-list="handleOnRemoveFromList" />
+    <!-- <ul>
       <li v-for="item in itemsTodelete" :key="item.id" class="flex items-center justify-between">
         {{ item.name }}
         <IconButton @click="() => handleClickRemoveItemFromList(item.id)">
           <IconClose />
         </IconButton>
       </li>
-    </ul>
+    </ul> -->
   </BaseModal>
 
 </template>
