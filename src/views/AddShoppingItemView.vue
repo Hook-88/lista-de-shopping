@@ -6,8 +6,11 @@ import PageHeader from '@/components/page-header/PageHeader.vue';
 import { addDoc, collection } from 'firebase/firestore';
 import { ref } from 'vue';
 import { useFirestore } from 'vuefire';
+import { useToast } from 'vue-toast-notification';
 
 const db = useFirestore()
+
+const toast = useToast()
 
 function handleOnFormSubmit(formData: FormDatatype) {
   addNewDoc(formData)
@@ -21,7 +24,12 @@ async function addNewDoc(formData: FormDatatype) {
   addingError.value = null
 
   try {
-    const docRef = await addDoc(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'), formData)
+    await addDoc(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'), formData)
+    toast.success(`${formData.name} added to shoping list`, {
+      position: 'top',
+      duration: 2000,
+
+    })
   } catch (err) {
     addingError.value = err as Error
   } finally {
