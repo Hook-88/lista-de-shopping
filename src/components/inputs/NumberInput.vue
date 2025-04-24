@@ -15,11 +15,13 @@ const emit = defineEmits<{
 
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement
+
   emit('update:modelValue', target.value)
 }
 
 </script>
 
 <template>
-  <BaseInput v-bind="props" :value="modelValue" @input="handleInput" class="px-2 py-1 rounded bg-ivory/10" />
+  <BaseInput v-bind="props" type="number" @input="handleInput" :value="modelValue"
+    class="px-2 py-1 rounded bg-ivory/10" />
 </template>
