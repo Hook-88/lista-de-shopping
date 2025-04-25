@@ -17,7 +17,7 @@ const app = createApp(App)
 app.use(createPinia())
 
 app.use(VueToast, {
-  position: 'top-right', // 👈 default for all toasts
+  position: 'top', // 👈 default for all toasts
   duration: 3000,
   dismissible: true,
 })
