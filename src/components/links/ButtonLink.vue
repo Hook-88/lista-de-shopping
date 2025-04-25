@@ -3,7 +3,7 @@ import type { RouterLinkProps } from 'vue-router';
 import IconLink from './IconLink.vue';
 
 interface Props extends /* ignore */ RouterLinkProps {
-  variant: 'action' | 'danger'
+  variant?: 'action' | 'danger'
 }
 
 defineProps<Props>()
