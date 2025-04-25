@@ -7,6 +7,7 @@ import NumberInput from '@/components/inputs/NumberInput.vue';
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import { useAddItemForm } from '@/features/shopping-list/add-item/addItemForm';
 import type { ShoppingItemInterface } from '@/types/types';
+import ButtonLink from '@/components/links/ButtonLink.vue';
 
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
@@ -58,7 +59,7 @@ function handleSubmit() {
 
     <footer class="p-2 border-y border-ivory/20 flex gap-2">
       <BaseButton variant="action" class="grow">Add item</BaseButton>
-      <BaseButton variant="danger" type="button">Cancel</BaseButton>
+      <ButtonLink variant="danger" :to="{ name: 'home' }">Cancel</ButtonLink>
     </footer>
 
   </form>
