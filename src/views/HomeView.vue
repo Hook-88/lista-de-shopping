@@ -88,6 +88,7 @@ function handleClickDeleteCheckedItems() {
 async function handleOnConfirm() {
   deleteDocs()
   checkItem.clearSelection()
+  selectItemEdit.clearSelection()
 
 }
 // Delete items
@@ -105,6 +106,12 @@ function handleOnEditItem(itemId: string) {
 
 function handleOnCloseEditTools() {
   selectItemEdit.clearSelection()
+}
+
+function handleOnDeleteItem(itemId: string) {
+  console.log(itemId)
+  idsToDelete.selectId(itemId)
+  confirmModalRef.value?.openModal()
 }
 
 
@@ -155,7 +162,8 @@ function handleOnCloseEditTools() {
 
   </main>
 
-  <EditItemTools v-if="selectItemEdit.selection.value" @on-close-edit-tools="handleOnCloseEditTools" />
+  <EditItemTools v-if="selectItemEdit.selection.value" @on-close-edit-tools="handleOnCloseEditTools"
+    :item-id="selectItemEdit.selection.value" @on-delete-item="handleOnDeleteItem" />
 
   <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
