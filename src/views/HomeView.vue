@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
+import ButtonLink from '@/components/links/ButtonLink.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
@@ -10,7 +11,7 @@ import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItem
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
-import { collection, doc, writeBatch } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
 import { computed } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
 
@@ -62,7 +63,7 @@ const displayItems = computed(() => {
 
 
 // Delete items //
-const { idsToDelete, confirmModalRef, itemsTodelete, handleOnRemoveFromList } = useDeleteItems(shoppingList)
+const { idsToDelete, confirmModalRef, itemsTodelete, handleOnRemoveFromList, deleteDocs } = useDeleteItems(shoppingList)
 
 function handleClickDeleteCheckedItems() {
   idsToDelete.setSelection(checkItem.selection.value)
@@ -70,18 +71,9 @@ function handleClickDeleteCheckedItems() {
 }
 
 async function handleOnConfirm() {
-  const batch = writeBatch(db)
-
-  idsToDelete.selection.value.forEach(id => {
-    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', id)
-    batch.delete(docRef)
-  })
-
-  await batch.commit()
-
-  confirmModalRef.value?.closeModal()
+  deleteDocs()
   checkItem.clearSelection()
-  idsToDelete.clearSelection()
+
 }
 // Delete items
 
@@ -102,7 +94,7 @@ async function handleOnConfirm() {
       {{ shoppingListError.message }}
     </div>
 
-    <div v-else>
+    <div v-else-if="shoppingList.length > 0">
 
       <header>
         <ShoppingListFilter :list-labels="listLabels" :selected-label="selectFilter.selection.value"
@@ -122,6 +114,12 @@ async function handleOnConfirm() {
         Delete Checked Items
       </BaseButton>
 
+    </div>
+
+    <div v-else class="flex">
+      <ButtonLink variant="action" to="/shopping-list/add-item" class="grow text-center">
+        Start adding items
+      </ButtonLink>
     </div>
 
 
