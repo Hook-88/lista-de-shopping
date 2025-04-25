@@ -6,6 +6,7 @@ import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
+import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItems';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
@@ -77,6 +78,17 @@ async function handleOnConfirm() {
 }
 // Delete items
 
+// Edit item //
+const selectItemEdit = useSelectSingleId()
+
+function itemIsSelectedToEdit(itemId: string) {
+  return selectItemEdit.selection.value === itemId
+}
+
+function handleOnEditItem(itemId: string) {
+  selectItemEdit.selectId(itemId)
+}
+
 
 </script>
 
@@ -106,7 +118,8 @@ async function handleOnConfirm() {
 
       <BaseList>
         <ShoppingItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
-          @on-toggle-check="handleOnToggleCheck" />
+          @on-toggle-check="handleOnToggleCheck" :is-selected="itemIsSelectedToEdit(item.id)"
+          @on-edit-item="handleOnEditItem" />
       </BaseList>
 
       <BaseButton variant="danger" class="w-full mt-4 text-lg disabled:bg-red-950 disabled:text-ivory/50"
