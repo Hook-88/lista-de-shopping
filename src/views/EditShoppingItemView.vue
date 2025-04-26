@@ -8,6 +8,7 @@ import type { ShoppingItemInterface } from '@/types/types';
 import { doc, updateDoc } from 'firebase/firestore';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useToast } from 'vue-toast-notification';
 import { useDocument, useFirestore } from 'vuefire';
 
 const route = useRoute()
@@ -28,6 +29,7 @@ function handleOnUpdateItem(formData: {
 
 const isUpdating = ref(false)
 const updatingError = ref<Error | null>(null)
+const toast = useToast()
 
 async function mutateDoc(newItemData: FormDatatype) {
   isUpdating.value = true
@@ -35,6 +37,11 @@ async function mutateDoc(newItemData: FormDatatype) {
 
   try {
     await updateDoc(docRef, newItemData)
+    toast.success('item updated', {
+      duration: 2000,
+      position: 'top'
+    })
+
   } catch (error) {
     updatingError.value = error as Error
   } finally {
