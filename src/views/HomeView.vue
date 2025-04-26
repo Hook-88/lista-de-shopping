@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
-import IconButton from '@/components/buttons/IconButton.vue';
-import IconClose from '@/components/icons/IconClose.vue';
-import IconPlus from '@/components/icons/IconPlus.vue';
 import ButtonLink from '@/components/links/ButtonLink.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
-import BaseToolbelt from '@/components/toolbelt/BaseToolbelt.vue';
 import EditItemTools from '@/components/toolbelt/edit-item-tools/EditItemTools.vue';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
@@ -17,9 +13,6 @@ import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItem
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faMinus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import { computed, ref } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';

@@ -8,14 +8,38 @@ import BaseButton from '@/components/buttons/BaseButton.vue';
 import { useAddItemForm } from '@/features/shopping-list/add-item/addItemForm';
 import type { ShoppingItemInterface } from '@/types/types';
 import ButtonLink from '@/components/links/ButtonLink.vue';
+import { watch } from 'vue';
 
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
+
+interface Props {
+  item?: ShoppingItemInterface
+}
+
+const props = defineProps<Props>()
 
 const { formData, toggleIsFavorite, resetForm } = useAddItemForm()
 
 const emit = defineEmits<{
   (e: 'on-form-submit', newItemData: FormDatatype): void
+
 }>()
+
+watch(
+  () => props.item,
+  (shoppingItem) => {
+
+    if (shoppingItem) {
+      Object.assign(formData, omitId(shoppingItem))
+    }
+  },
+  { immediate: true }
+)
+
+function omitId(item: ShoppingItemInterface): FormDatatype {
+  const { id, ...rest } = item
+  return rest
+}
 
 function handleSubmit() {
   emit('on-form-submit', { ...formData })
