@@ -50,7 +50,12 @@ function handleClickDecrement() {
       <IconPlus />
     </IconButton>
 
-    <IconLink>
+    <IconLink :to="{
+      name: 'edit-shopping-item',
+      params: {
+        itemId: props.itemId
+      }
+    }">
       <IconEdit />
     </IconLink>
 
