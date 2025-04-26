@@ -9,6 +9,7 @@ import IconLink from '@/components/links/IconLink.vue';
 
 interface Props {
   itemId: string
+  isSingleItem: boolean
 }
 
 const props = defineProps<Props>()
@@ -16,7 +17,8 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'on-close-edit-tools'): void
   (e: 'on-delete-item', itemId: string): void
-
+  (e: 'on-increment-quantity', itemId: string): void
+  (e: 'on-decrement-quantity', itemId: string): void
 }>()
 
 function handleOnClose() {
@@ -27,16 +29,24 @@ function handleClickDelete() {
   emit('on-delete-item', props.itemId)
 }
 
+function handleClickIncrement() {
+  emit('on-increment-quantity', props.itemId)
+}
+
+function handleClickDecrement() {
+  emit('on-decrement-quantity', props.itemId)
+}
+
 </script>
 
 <template>
   <BaseToolbelt @on-close="handleOnClose">
 
-    <IconButton>
+    <IconButton @click="handleClickDecrement" :disabled="isSingleItem" class="disabled:text-ivory/40">
       <IconMinus />
     </IconButton>
 
-    <IconButton>
+    <IconButton @click="handleClickIncrement">
       <IconPlus />
     </IconButton>
 

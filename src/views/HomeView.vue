@@ -20,8 +20,8 @@ import type { ShoppingItemInterface } from '@/types/types';
 import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { faMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { collection } from 'firebase/firestore';
-import { computed } from 'vue';
+import { collection, doc, updateDoc } from 'firebase/firestore';
+import { computed, ref } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -93,7 +93,7 @@ async function handleOnConfirm() {
 }
 // Delete items
 
-// Edit item //
+// Toolbelt //
 const selectItemEdit = useSelectSingleId()
 
 function itemIsSelectedToEdit(itemId: string) {
@@ -107,13 +107,47 @@ function handleOnEditItem(itemId: string) {
 function handleOnCloseEditTools() {
   selectItemEdit.clearSelection()
 }
+// Toolbelt //
 
+// Toolbelt - Delete item //
 function handleOnDeleteItem(itemId: string) {
-  console.log(itemId)
   idsToDelete.selectId(itemId)
   confirmModalRef.value?.openModal()
 }
+// Toolbelt - Delete item //
 
+// Toolbelt - mutate quantity //
+const isUpdating = ref(false)
+const updatingError = ref<Error | null>(null)
+
+async function mutateItemQuantity(itemId: string, mutateValue: number) {
+  isUpdating.value = true
+  updatingError.value = null
+
+  try {
+    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', itemId)
+    const currentDoc = shoppingList.value.find(item => item.id === itemId)
+    await updateDoc(docRef, { quantity: Number(currentDoc?.quantity) + Number(mutateValue) })
+  } catch (error) {
+    updatingError.value = error as Error
+  } finally {
+    isUpdating.value = false
+  }
+}
+
+function handleOnIncrementQuantity(itemId: string) {
+  mutateItemQuantity(itemId, 1)
+}
+
+function handleOnDecrementQuantity(itemId: string) {
+  mutateItemQuantity(itemId, -1)
+}
+
+function getIsSingleItem(itemId: string) {
+  const item = shoppingList.value.find(item => item.id === itemId)
+
+  return item?.quantity === 1
+}
 
 </script>
 
@@ -163,7 +197,9 @@ function handleOnDeleteItem(itemId: string) {
   </main>
 
   <EditItemTools v-if="selectItemEdit.selection.value" @on-close-edit-tools="handleOnCloseEditTools"
-    :item-id="selectItemEdit.selection.value" @on-delete-item="handleOnDeleteItem" />
+    :item-id="selectItemEdit.selection.value" @on-delete-item="handleOnDeleteItem"
+    @on-increment-quantity="handleOnIncrementQuantity" @on-decrement-quantity="handleOnDecrementQuantity"
+    :is-single-item="getIsSingleItem(selectItemEdit.selection.value)" />
 
   <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
