@@ -3,10 +3,9 @@ import ShoppingItemForm, { type FormDatatype } from '@/components/form/add-shopp
 import IconAngleLeft from '@/components/icons/IconAngleLeft.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
-import { useAddDoc } from '@/features/shopping-list/add-item/addDoc';
+import { useMutateDoc } from '@/features/shopping-list/edit-item/mutateDoc';
 import type { ShoppingItemInterface } from '@/types/types';
-import { doc, updateDoc } from 'firebase/firestore';
-import { ref } from 'vue';
+import { doc } from 'firebase/firestore';
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toast-notification';
 import { useDocument, useFirestore } from 'vuefire';
@@ -24,31 +23,19 @@ function handleOnUpdateItem(formData: {
   data: FormDatatype,
   id: string
 }) {
-  mutateDoc(formData.data)
-}
+  mutateDoc(docRef, formData.data)
 
-const isUpdating = ref(false)
-const updatingError = ref<Error | null>(null)
-const toast = useToast()
-
-async function mutateDoc(newItemData: FormDatatype) {
-  isUpdating.value = true
-  updatingError.value = null
-
-  try {
-    await updateDoc(docRef, newItemData)
+  if (updateSuccesfull.value) {
     toast.success('item updated', {
       duration: 2000,
       position: 'top'
     })
-
-  } catch (error) {
-    updatingError.value = error as Error
-  } finally {
-    isLoading.value = false
   }
-
 }
+
+const { mutateDoc, updateSuccesfull } = useMutateDoc()
+
+const toast = useToast()
 
 </script>
 
