@@ -42,7 +42,7 @@ const toast = useToast()
 <template>
   <PageHeader class="grid grid-cols-4">
 
-    <IconLink :to="{ name: 'home' }" class="text-base flex items-center gap-1 text-blue-600">
+    <IconLink :to="{ name: 'home', }" class="text-base flex items-center gap-1 text-blue-600">
       <IconAngleLeft />
       Back
     </IconLink>
