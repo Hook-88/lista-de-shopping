@@ -19,11 +19,11 @@ const {
   error,
 } = useDocument<ShoppingItemInterface>(docRef)
 
-function handleOnUpdateItem(formData: {
+async function handleOnUpdateItem(formData: {
   data: FormDatatype,
   id: string
 }) {
-  mutateDoc(docRef, formData.data)
+  await mutateDoc(docRef, formData.data)
 
   if (updateSuccesfull.value) {
     toast.success('item updated', {
