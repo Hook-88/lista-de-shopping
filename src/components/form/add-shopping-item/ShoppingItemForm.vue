@@ -22,6 +22,10 @@ const { formData, toggleIsFavorite, resetForm } = useAddItemForm()
 
 const emit = defineEmits<{
   (e: 'on-form-submit', newItemData: FormDatatype): void
+  (e: 'on-update-item', itemData: {
+    data: FormDatatype,
+    id: string
+  }): void
 
 }>()
 
@@ -42,6 +46,11 @@ function omitId(item: ShoppingItemInterface): FormDatatype {
 }
 
 function handleSubmit() {
+  if (props.item) {
+    emit('on-update-item', { data: formData, id: props.item.id })
+    return
+  }
+
   emit('on-form-submit', { ...formData })
   resetForm()
 }

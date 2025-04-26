@@ -5,7 +5,8 @@ import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useAddDoc } from '@/features/shopping-list/add-item/addDoc';
 import type { ShoppingItemInterface } from '@/types/types';
-import { doc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useDocument, useFirestore } from 'vuefire';
 
@@ -18,8 +19,28 @@ const {
   error,
 } = useDocument<ShoppingItemInterface>(docRef)
 
-function handleOnFormSubmit(formData: FormDatatype) {
-  console.log(shoppingItem.value)
+function handleOnUpdateItem(formData: {
+  data: FormDatatype,
+  id: string
+}) {
+  mutateDoc(formData.data)
+}
+
+const isUpdating = ref(false)
+const updatingError = ref<Error | null>(null)
+
+async function mutateDoc(newItemData: FormDatatype) {
+  isUpdating.value = true
+  updatingError.value = null
+
+  try {
+    await updateDoc(docRef, newItemData)
+  } catch (error) {
+    updatingError.value = error as Error
+  } finally {
+    isLoading.value = false
+  }
+
 }
 
 </script>
@@ -41,7 +62,7 @@ function handleOnFormSubmit(formData: FormDatatype) {
     <div v-if="isLoading">
       Loading...
     </div>
-    <ShoppingItemForm v-else @on-form-submit="handleOnFormSubmit" :item="shoppingItem!" />
+    <ShoppingItemForm v-else @on-update-item="handleOnUpdateItem" :item="shoppingItem!" />
   </main>
 
 </template>
