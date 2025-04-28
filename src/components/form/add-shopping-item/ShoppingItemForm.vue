@@ -8,6 +8,7 @@ import BaseButton from '@/components/buttons/BaseButton.vue';
 import { useAddItemForm } from '@/features/shopping-list/add-item/addItemForm';
 import type { ShoppingItemInterface } from '@/types/types';
 import ButtonLink from '@/components/links/ButtonLink.vue';
+import { onMounted, ref } from 'vue';
 
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
@@ -17,10 +18,17 @@ const emit = defineEmits<{
   (e: 'on-form-submit', newItemData: FormDatatype): void
 }>()
 
+const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
+
 function handleSubmit() {
   emit('on-form-submit', { ...formData })
   resetForm()
+  nameInputRef.value?.focusInput()
 }
+
+onMounted(() => {
+  nameInputRef.value?.focusInput()
+})
 
 </script>
 
@@ -31,7 +39,7 @@ function handleSubmit() {
       <div class="flex">
 
         <InputLabelWrapper class="grow">
-          <TextInput label="Name" placeholder="Item name..." required v-model="formData.name" />
+          <TextInput label="Name" placeholder="Item name..." required v-model="formData.name" ref="nameInputRef" />
         </InputLabelWrapper>
 
         <IsFavoriteButton :is-favorite="formData.isFavorite" class="self-stretch flex text-2xl mb-0.5 items-end pr-0"
