@@ -32,7 +32,6 @@ function handleOnToggleCheck(itemId: string) {
   checkItem.toggleSelect(itemId)
   selectItemEdit.clearSelection()
 }
-
 // Check item //
 
 
@@ -86,6 +85,7 @@ async function handleOnConfirm() {
 }
 // Delete items
 
+
 // Toolbelt //
 const selectItemEdit = useSelectSingleId()
 
@@ -102,12 +102,14 @@ function handleOnCloseEditTools() {
 }
 // Toolbelt //
 
+
 // Toolbelt - Delete item //
 function handleOnDeleteItem(itemId: string) {
   idsToDelete.selectId(itemId)
   confirmModalRef.value?.openModal()
 }
 // Toolbelt - Delete item //
+
 
 // Toolbelt - mutate quantity //
 const isUpdating = ref(false)
