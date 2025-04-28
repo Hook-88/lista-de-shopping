@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import BaseList from '@/components/list/BaseList.vue';
-import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
-import { useDeleteDocs } from '@/features/firestore/deleteDocs';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
-import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItems';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
+import { useDeleteShoppingItems } from '@/features/shopping-list/delete-items/deleteShoppingItems';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
+import { useListProgressText } from '@/features/shopping-list/list-progress-text/listProgressText';
 import type { ShoppingItemInterface } from '@/types/types';
-import { collection, doc, writeBatch } from 'firebase/firestore';
-import { computed, ref, watch } from 'vue';
+import { collection } from 'firebase/firestore';
+import { computed, watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import { useCollection, useFirestore } from 'vuefire';
 
@@ -31,6 +30,11 @@ const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem()
 
 
 // List Progress //
+// const { text } = useListProgressText({
+//   numOfCheckedItems: checkItem.selection.value.length,
+//   numOfShoppingItems: shoppingList.value.length
+// })
+
 const listProgressText = computed(() => {
   return checkItem.selection.value.length === shoppingList.value.length ?
     `(${checkItem.selection.value.length}/${shoppingList.value.length}) - Completed` :
@@ -65,28 +69,29 @@ const displayItems = computed(() => {
 
 
 // Delete items //
-const { idsToDelete, itemsTodelete } = useDeleteItems(shoppingList)
-const { deleteDocs, deletingSuccesful } = useDeleteDocs()
+const { removeIdFromDeleteList, deleteCheckedItems, confirmDeleteItems, deletingSuccesful, confirmModalRef, itemsTodelete, idsToDelete } = useDeleteShoppingItems(shoppingList)
 const toast = useToast()
 
-const confirmModalRef = ref<InstanceType<typeof ConfirmationModal> | null>(null)
-
 function handleOnRemoveFromList(itemId: string) {
-  idsToDelete.deSelectId(itemId)
-
-  if (idsToDelete.selection.value.length === 0) {
-    confirmModalRef.value?.closeModal()
-  }
+  removeIdFromDeleteList(itemId)
 }
 
 function handleClickDeleteCheckedItems() {
-  idsToDelete.setSelection(checkItem.selection.value)
-  confirmModalRef.value?.openModal()
+  deleteCheckedItems(checkItem.selection.value)
 }
 
 async function handleOnConfirm() {
-  await deleteDocs(idsToDelete.selection.value)
-  confirmModalRef.value?.closeModal()
+  confirmDeleteItems()
+
+  const noDeleteCheckedIds = checkItem.selection.value.filter(checkedId => {
+
+    if (!idsToDelete.selection.value.includes(checkedId)) {
+
+      return checkedId
+    }
+  })
+
+  checkItem.setSelection(noDeleteCheckedIds)
 }
 
 watch(
