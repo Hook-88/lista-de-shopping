@@ -72,10 +72,6 @@ const displayItems = computed(() => {
 const { removeIdFromDeleteList, deleteCheckedItems, confirmDeleteItems, deletingSuccesful, confirmModalRef, itemsTodelete, idsToDelete } = useDeleteShoppingItems(shoppingList)
 const toast = useToast()
 
-function handleOnRemoveFromList(itemId: string) {
-  removeIdFromDeleteList(itemId)
-}
-
 function handleClickDeleteCheckedItems() {
   deleteCheckedItems(checkItem.selection.value)
 }
@@ -152,7 +148,7 @@ watch(
 
   <ConfirmationModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
-    <DeleteList :items="itemsTodelete" @on-remove-from-list="handleOnRemoveFromList" />
+    <DeleteList :items="itemsTodelete" @on-remove-from-list="removeIdFromDeleteList" />
   </ConfirmationModal>
 
 </template>
