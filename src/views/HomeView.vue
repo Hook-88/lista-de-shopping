@@ -2,6 +2,7 @@
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
+import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
@@ -11,7 +12,7 @@ import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -62,7 +63,17 @@ const displayItems = computed(() => {
 
 
 // Delete items //
-const { idsToDelete, confirmModalRef, itemsTodelete, handleOnRemoveFromList } = useDeleteItems(shoppingList)
+const { idsToDelete, itemsTodelete, deleteDocs } = useDeleteItems(shoppingList)
+
+const confirmModalRef = ref<InstanceType<typeof ConfirmationModal> | null>(null)
+
+function handleOnRemoveFromList(itemId: string) {
+  idsToDelete.deSelectId(itemId)
+
+  if (idsToDelete.selection.value.length === 0) {
+    confirmModalRef.value?.closeModal()
+  }
+}
 
 function handleClickDeleteCheckedItems() {
   idsToDelete.setSelection(checkItem.selection.value)
@@ -70,18 +81,9 @@ function handleClickDeleteCheckedItems() {
 }
 
 async function handleOnConfirm() {
-  const batch = writeBatch(db)
-
-  idsToDelete.selection.value.forEach(id => {
-    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', id)
-    batch.delete(docRef)
-  })
-
-  await batch.commit()
+  await deleteDocs(idsToDelete.selection.value)
 
   confirmModalRef.value?.closeModal()
-  checkItem.clearSelection()
-  idsToDelete.clearSelection()
 }
 // Delete items
 
@@ -127,9 +129,9 @@ async function handleOnConfirm() {
 
   </main>
 
-  <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
+  <ConfirmationModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
     <DeleteList :items="itemsTodelete" @on-remove-from-list="handleOnRemoveFromList" />
-  </BaseModal>
+  </ConfirmationModal>
 
 </template>

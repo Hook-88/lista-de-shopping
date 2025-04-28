@@ -1,13 +1,12 @@
-import { computed, ref, type Ref } from 'vue'
+import { computed, type Ref } from 'vue'
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds'
-import BaseModal from '@/components/modal/BaseModal.vue'
 import type { ShoppingItemInterface } from '@/types/types'
+import { useFirestore } from 'vuefire'
+import { doc, writeBatch } from 'firebase/firestore'
 
 export const useDeleteItems = (shoppingList: Ref<ShoppingItemInterface[]>) => {
-  // Delete items //
   const idsToDelete = useSelectMultipleIds()
-
-  const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
+  const db = useFirestore()
 
   const itemsTodelete = computed(() => {
     const items = shoppingList.value.filter((shoppingItem) => {
@@ -18,21 +17,23 @@ export const useDeleteItems = (shoppingList: Ref<ShoppingItemInterface[]>) => {
 
     return items
   })
-  // Delete items
 
-  // Remove item from delete list //
-  function handleOnRemoveFromList(itemId: string) {
-    idsToDelete.deSelectId(itemId)
+  // Delete Docs //
+  async function deleteDocs(ids: string[]) {
+    const batch = writeBatch(db)
 
-    if (idsToDelete.selection.value.length === 0) {
-      confirmModalRef.value?.closeModal()
-    }
+    ids.forEach((id) => {
+      const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', id)
+      batch.delete(docRef)
+    })
+
+    await batch.commit()
   }
 
   return {
     idsToDelete,
-    confirmModalRef,
     itemsTodelete,
-    handleOnRemoveFromList,
+
+    deleteDocs,
   }
 }
