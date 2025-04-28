@@ -6,13 +6,15 @@ import ConfirmationModal from '@/components/modal/confirmation-modal/Confirmatio
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
+import { useDeleteDocs } from '@/features/firestore/deleteDocs';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItems';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useToast } from 'vue-toast-notification';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -63,7 +65,9 @@ const displayItems = computed(() => {
 
 
 // Delete items //
-const { idsToDelete, itemsTodelete, deleteDocs } = useDeleteItems(shoppingList)
+const { idsToDelete, itemsTodelete } = useDeleteItems(shoppingList)
+const { deleteDocs, deletingSuccesful } = useDeleteDocs()
+const toast = useToast()
 
 const confirmModalRef = ref<InstanceType<typeof ConfirmationModal> | null>(null)
 
@@ -82,9 +86,21 @@ function handleClickDeleteCheckedItems() {
 
 async function handleOnConfirm() {
   await deleteDocs(idsToDelete.selection.value)
-
   confirmModalRef.value?.closeModal()
 }
+
+watch(
+  () => deletingSuccesful.value,
+  (succes: boolean) => {
+    if (succes) {
+      toast.success('Items Deleted', {
+        position: 'top',
+        duration: 2000
+      })
+
+    }
+  }
+)
 // Delete items
 
 
