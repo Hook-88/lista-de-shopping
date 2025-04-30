@@ -7,23 +7,31 @@ import IconCheck from '@/components/icons/IconCheck.vue';
 interface Props {
   item: ShoppingItemInterface
   isChecked: boolean
+  isSelected: boolean
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'on-toggle-check', itemId: string): void
+  (e: 'on-select-item', itemId: string): void
 }>()
 
 function handleClickItem() {
   emit('on-toggle-check', props.item.id)
 }
 
+function handleClickSelectItem() {
+  emit('on-select-item', props.item.id)
+}
+
 </script>
 
 <template>
-  <li class="border border-ivory/20 rounded-sm text-lg pl-2 flex items-center gap-1 justify-between" :class="{
-    'bg-green-800': isChecked
+  <li class="border rounded-sm text-lg pl-2 flex items-center gap-1 justify-between" :class="{
+    'bg-green-800': isChecked,
+    'border-ivory': isSelected,
+    'border-ivory/20': !isSelected
   }" @click="handleClickItem">
 
     {{ item.name }}
@@ -35,8 +43,8 @@ function handleClickItem() {
       <IconCheck />
     </span>
 
-    <IconButton v-else>
-      <IconCircle />
+    <IconButton v-else @click.stop="handleClickSelectItem">
+      <IconCircle :is-solid="isSelected" />
     </IconButton>
 
   </li>
