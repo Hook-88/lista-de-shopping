@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import BaseList from '@/components/list/BaseList.vue';
+import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
@@ -13,7 +14,7 @@ import { useDisplayShoppingItems } from '@/features/shopping-list/list-filter/di
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
 import { collection } from 'firebase/firestore';
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import { useCollection, useFirestore } from 'vuefire';
 
@@ -97,10 +98,29 @@ const selectItemToEdit = useSelectSingleId()
 
 function handleSelectItem(itemId: string) {
   selectItemToEdit.selectId(itemId)
+
+  showToolbar()
 }
 
 function itemIsSelectedForEdit(itemId: string) {
   return selectItemToEdit.selection.value === itemId
+}
+// Select item to edit //
+
+
+// Toolbar //
+const baseModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
+
+function showToolbar() {
+  baseModalRef.value?.openModal()
+}
+
+function hideToolbar() {
+  baseModalRef.value?.closeModal()
+}
+
+function handleCloseToolbar() {
+  selectItemToEdit.clearSelection()
 }
 
 
@@ -149,5 +169,11 @@ function itemIsSelectedForEdit(itemId: string) {
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
     <DeleteList :items="itemsTodelete" @on-remove-from-list="removeIdFromDeleteList" />
   </ConfirmationModal>
+
+  <BaseModal variant="transparant" ref="baseModalRef" @close-modal="handleCloseToolbar">
+    <div>
+      This is the toolbar
+    </div>
+  </BaseModal>
 
 </template>

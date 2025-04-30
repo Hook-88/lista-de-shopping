@@ -15,11 +15,11 @@ function openModal() {
 
 function closeModal() {
   dialogRef.value?.close()
-  emit('close')
+  emit('close-modal')
 }
 
 const emit = defineEmits<{
-  (e: 'close'): void
+  (e: 'close-modal'): void
 }>()
 
 function handleClose() {
@@ -38,8 +38,6 @@ defineExpose({
     'bg-obsidian/50 backdrop-blur-xs': variant === 'blur',
     'bg-obsidian/20': variant === 'transparant'
   }" ref="dialogRef">
-    <div class="bg-obsidian">
-      <slot></slot>
-    </div>
+    <slot></slot>
   </dialog>
 </template>
