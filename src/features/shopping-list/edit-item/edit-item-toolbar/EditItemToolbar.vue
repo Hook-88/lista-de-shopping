@@ -7,6 +7,7 @@ import IconPlus from '@/components/icons/IconPlus.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconTrash from '@/components/icons/IconTrash.vue';
 import { ref, type Ref } from 'vue';
+import IconLink from '@/components/links/IconLink.vue';
 
 interface Props {
   itemId: Ref<string | null>
@@ -60,9 +61,11 @@ defineExpose({
         <IconPlus />
       </IconButton>
 
-      <IconButton>
+      <IconLink :to="{
+        name: 'about'
+      }">
         <IconEdit />
-      </IconButton>
+      </IconLink>
 
       <IconButton @click="handleClickTrash">
         <IconTrash />
