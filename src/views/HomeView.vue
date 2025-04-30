@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import IconButton from '@/components/buttons/IconButton.vue';
-import IconClose from '@/components/icons/IconClose.vue';
+import IconEdit from '@/components/icons/IconEdit.vue';
+import IconMinus from '@/components/icons/IconMinus.vue';
 import IconPlus from '@/components/icons/IconPlus.vue';
+import IconTrash from '@/components/icons/IconTrash.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
@@ -14,12 +16,10 @@ import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useDeleteShoppingItems } from '@/features/shopping-list/delete-items/deleteShoppingItems';
+import EditItemToolbar from '@/features/shopping-list/edit-item/edit-item-toolbar/EditItemToolbar.vue';
 import { useDisplayShoppingItems } from '@/features/shopping-list/list-filter/displayShoppingItems';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faMinus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { collection } from 'firebase/firestore';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
@@ -116,18 +116,26 @@ function itemIsSelectedForEdit(itemId: string) {
 
 
 // Toolbar //
-const baseModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
+const editItemToolbarRef = ref<InstanceType<typeof EditItemToolbar> | null>(null)
 
 function showToolbar() {
-  baseModalRef.value?.openModal()
+  editItemToolbarRef.value?.openToolbar()
 }
 
 function hideToolbar() {
-  baseModalRef.value?.closeModal()
+  editItemToolbarRef.value?.closeToolbar()
 }
 
 function handleCloseToolbar() {
   selectItemToEdit.clearSelection()
+}
+// Toolbar //
+
+// Delete item //
+function handleOnDeleteItem(itemId: string) {
+  hideToolbar()
+  idsToDelete.setSelection([itemId])
+  confirmModalRef.value?.openModal()
 }
 
 
@@ -177,25 +185,6 @@ function handleCloseToolbar() {
     <DeleteList :items="itemsTodelete" @on-remove-from-list="removeIdFromDeleteList" />
   </ConfirmationModal>
 
-  <BaseModal variant="transparant" ref="baseModalRef" @close-modal="handleCloseToolbar">
-    <BaseToolbar @on-close-toolbar="hideToolbar">
-      <IconButton>
-        <FontAwesomeIcon :icon="faMinus" />
-      </IconButton>
-
-      <IconButton>
-        <IconPlus />
-      </IconButton>
-
-      <IconButton>
-        <FontAwesomeIcon :icon="faEdit" />
-      </IconButton>
-
-      <IconButton>
-        <FontAwesomeIcon :icon="faTrashAlt" />
-      </IconButton>
-
-    </BaseToolbar>
-  </BaseModal>
-
+  <EditItemToolbar :item-id="selectItemToEdit.selection" @on-close-toolbar="handleCloseToolbar" ref="editItemToolbarRef"
+    @on-delete-item="handleOnDeleteItem" />
 </template>
