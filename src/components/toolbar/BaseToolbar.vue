@@ -13,7 +13,7 @@ function handleClickClose() {
 </script>
 
 <template>
-  <div class="bg-sky-800 mt-auto mb-7 mx-2 rounded-sm border border-ivory/30 text-2xl">
+  <div class="bg-sky-900 mt-auto mb-7 mx-2 rounded-sm border border-ivory/20 text-2xl flex justify-around">
     <slot></slot>
     <IconButton @click="handleClickClose">
       <IconClose />

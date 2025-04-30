@@ -2,6 +2,7 @@
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import IconButton from '@/components/buttons/IconButton.vue';
 import IconClose from '@/components/icons/IconClose.vue';
+import IconPlus from '@/components/icons/IconPlus.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
@@ -16,6 +17,9 @@ import { useDeleteShoppingItems } from '@/features/shopping-list/delete-items/de
 import { useDisplayShoppingItems } from '@/features/shopping-list/list-filter/displayShoppingItems';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
+import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { collection } from 'firebase/firestore';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
@@ -175,6 +179,21 @@ function handleCloseToolbar() {
 
   <BaseModal variant="transparant" ref="baseModalRef" @close-modal="handleCloseToolbar">
     <BaseToolbar @on-close-toolbar="hideToolbar">
+      <IconButton>
+        <FontAwesomeIcon :icon="faMinus" />
+      </IconButton>
+
+      <IconButton>
+        <IconPlus />
+      </IconButton>
+
+      <IconButton>
+        <FontAwesomeIcon :icon="faEdit" />
+      </IconButton>
+
+      <IconButton>
+        <FontAwesomeIcon :icon="faTrashAlt" />
+      </IconButton>
 
     </BaseToolbar>
   </BaseModal>
