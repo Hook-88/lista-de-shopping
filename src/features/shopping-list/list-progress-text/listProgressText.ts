@@ -1,8 +1,8 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 
 export const useListProgressText = (listProgressObj: {
-  numOfCheckedItems: number
-  numOfShoppingItems: number
+  numOfCheckedItems: Ref<number>
+  numOfShoppingItems: Ref<number>
 }) => {
   const text = computed(() => {
     return listProgressObj.numOfCheckedItems === listProgressObj.numOfShoppingItems

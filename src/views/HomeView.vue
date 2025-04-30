@@ -8,8 +8,8 @@ import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
 import { useDeleteShoppingItems } from '@/features/shopping-list/delete-items/deleteShoppingItems';
+import { useDisplayShoppingItems } from '@/features/shopping-list/list-filter/displayShoppingItems';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
-import { useListProgressText } from '@/features/shopping-list/list-progress-text/listProgressText';
 import type { ShoppingItemInterface } from '@/types/types';
 import { collection } from 'firebase/firestore';
 import { computed, watch } from 'vue';
@@ -30,11 +30,6 @@ const { checkItem, handleOnToggleCheck, itemIsChecked } = useCheckItem()
 
 
 // List Progress //
-// const { text } = useListProgressText({
-//   numOfCheckedItems: checkItem.selection.value.length,
-//   numOfShoppingItems: shoppingList.value.length
-// })
-
 const listProgressText = computed(() => {
   return checkItem.selection.value.length === shoppingList.value.length ?
     `(${checkItem.selection.value.length}/${shoppingList.value.length}) - Completed` :
@@ -56,15 +51,7 @@ const { selectFilter, handleOnClearFilter, handleOnSelectLabel } = useListFilter
 
 
 // Display items //
-const displayItems = computed(() => {
-  const selectedFilter = selectFilter.selection.value
-
-  if (selectedFilter) {
-    return shoppingList.value.filter(shoppingItem => shoppingItem.label === selectedFilter)
-  }
-
-  return shoppingList.value
-})
+const { displayItems } = useDisplayShoppingItems(selectFilter.selection, shoppingList)
 // Display items //
 
 
@@ -111,7 +98,6 @@ watch(
   <HomeViewHeader />
 
   <main class="p-2">
-
 
     <div v-if="shoppingListLoading">
       Loading...
