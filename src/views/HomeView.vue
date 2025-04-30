@@ -1,17 +1,10 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
-import IconButton from '@/components/buttons/IconButton.vue';
-import IconEdit from '@/components/icons/IconEdit.vue';
-import IconMinus from '@/components/icons/IconMinus.vue';
-import IconPlus from '@/components/icons/IconPlus.vue';
-import IconTrash from '@/components/icons/IconTrash.vue';
 import BaseList from '@/components/list/BaseList.vue';
-import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
-import BaseToolbar from '@/components/toolbar/BaseToolbar.vue';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
