@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
+import IconButton from '@/components/buttons/IconButton.vue';
+import IconClose from '@/components/icons/IconClose.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import BaseModal from '@/components/modal/BaseModal.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
+import BaseToolbar from '@/components/toolbar/BaseToolbar.vue';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
@@ -171,9 +174,9 @@ function handleCloseToolbar() {
   </ConfirmationModal>
 
   <BaseModal variant="transparant" ref="baseModalRef" @close-modal="handleCloseToolbar">
-    <div>
-      This is the toolbar
-    </div>
+    <BaseToolbar @on-close-toolbar="hideToolbar">
+
+    </BaseToolbar>
   </BaseModal>
 
 </template>
