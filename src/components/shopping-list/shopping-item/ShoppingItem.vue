@@ -14,15 +14,24 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'on-toggle-check', itemId: string): void
+<<<<<<< HEAD
   (e: 'on-edit-item', itemId: string): void
+=======
+  (e: 'on-select-item', itemId: string): void
+>>>>>>> edit-item
 }>()
 
 function handleClickItem() {
   emit('on-toggle-check', props.item.id)
 }
 
+<<<<<<< HEAD
 function handleClickEditItem() {
   emit('on-edit-item', props.item.id)
+=======
+function handleClickSelectItem() {
+  emit('on-select-item', props.item.id)
+>>>>>>> edit-item
 }
 
 </script>
@@ -43,7 +52,11 @@ function handleClickEditItem() {
       <IconCheck />
     </span>
 
+<<<<<<< HEAD
     <IconButton v-else @click.stop="handleClickEditItem">
+=======
+    <IconButton v-else @click.stop="handleClickSelectItem">
+>>>>>>> edit-item
       <IconCircle :is-solid="isSelected" />
     </IconButton>
 

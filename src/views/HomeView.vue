@@ -2,19 +2,23 @@
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import ButtonLink from '@/components/links/ButtonLink.vue';
 import BaseList from '@/components/list/BaseList.vue';
-import BaseModal from '@/components/modal/BaseModal.vue';
+import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
 import ShoppingItem from '@/components/shopping-list/shopping-item/ShoppingItem.vue';
 import ShoppingListFilter from '@/components/shopping-list/shopping-list-filter/ShoppingListFilter.vue';
+import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import EditItemTools from '@/components/toolbelt/edit-item-tools/EditItemTools.vue';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import { useCheckItem } from '@/features/shopping-list/check-item/checkItem';
-import { useDeleteItems } from '@/features/shopping-list/delete-items/deleteItems';
 import DeleteList from '@/features/shopping-list/delete-items/DeleteList.vue';
+import { useDeleteShoppingItems } from '@/features/shopping-list/delete-items/deleteShoppingItems';
+import EditItemToolbar from '@/features/shopping-list/edit-item/edit-item-toolbar/EditItemToolbar.vue';
+import { useDisplayShoppingItems } from '@/features/shopping-list/list-filter/displayShoppingItems';
 import { useListFilter } from '@/features/shopping-list/list-filter/listFilter';
 import type { ShoppingItemInterface } from '@/types/types';
-import { collection, doc, updateDoc } from 'firebase/firestore';
-import { computed, ref } from 'vue';
+import { collection } from 'firebase/firestore';
+import { computed, ref, watch } from 'vue';
+import { useToast } from 'vue-toast-notification';
 import { useCollection, useFirestore } from 'vuefire';
 
 const db = useFirestore()
@@ -57,92 +61,84 @@ const { selectFilter, handleOnClearFilter, handleOnSelectLabel } = useListFilter
 
 
 // Display items //
-const displayItems = computed(() => {
-  const selectedFilter = selectFilter.selection.value
-
-  if (selectedFilter) {
-    return shoppingList.value.filter(shoppingItem => shoppingItem.label === selectedFilter)
-  }
-
-  return shoppingList.value
-})
+const { displayItems } = useDisplayShoppingItems(selectFilter.selection, shoppingList)
 // Display items //
 
 
 // Delete items //
-const { idsToDelete, confirmModalRef, itemsTodelete, handleOnRemoveFromList, deleteDocs } = useDeleteItems(shoppingList)
+const { removeIdFromDeleteList, deleteCheckedItems, confirmDeleteItems, deletingSuccesful, confirmModalRef, itemsTodelete, idsToDelete } = useDeleteShoppingItems(shoppingList)
+const toast = useToast()
 
 function handleClickDeleteCheckedItems() {
-  idsToDelete.setSelection(checkItem.selection.value)
-  confirmModalRef.value?.openModal()
+  deleteCheckedItems(checkItem.selection.value)
 }
 
 async function handleOnConfirm() {
-  deleteDocs()
-  checkItem.clearSelection()
-  selectItemEdit.clearSelection()
+  confirmDeleteItems()
 
+  const noDeleteCheckedIds = checkItem.selection.value.filter(checkedId => {
+
+    if (!idsToDelete.selection.value.includes(checkedId)) {
+
+      return checkedId
+    }
+  })
+
+  checkItem.setSelection(noDeleteCheckedIds)
 }
+
+watch(
+  () => deletingSuccesful.value,
+  (succes: boolean) => {
+    if (succes) {
+      toast.success('Items Deleted', {
+        position: 'top',
+        duration: 2000
+      })
+
+    }
+  }
+)
 // Delete items
 
+// Select item to edit //
+const selectItemToEdit = useSelectSingleId()
 
-// Toolbelt //
-const selectItemEdit = useSelectSingleId()
+function handleSelectItem(itemId: string) {
+  selectItemToEdit.selectId(itemId)
 
-function itemIsSelectedToEdit(itemId: string) {
-  return selectItemEdit.selection.value === itemId
+  showToolbar()
 }
 
-function handleOnEditItem(itemId: string) {
-  selectItemEdit.selectId(itemId)
+function itemIsSelectedForEdit(itemId: string) {
+  return selectItemToEdit.selection.value === itemId
+}
+// Select item to edit //
+
+
+// Toolbar //
+const editItemToolbarRef = ref<InstanceType<typeof EditItemToolbar> | null>(null)
+
+function showToolbar() {
+  editItemToolbarRef.value?.openToolbar()
 }
 
-function handleOnCloseEditTools() {
-  selectItemEdit.clearSelection()
+function hideToolbar() {
+  editItemToolbarRef.value?.closeToolbar()
 }
-// Toolbelt //
 
+function handleCloseToolbar() {
+  selectItemToEdit.clearSelection()
+}
+// Toolbar //
 
-// Toolbelt - Delete item //
+// Delete item //
 function handleOnDeleteItem(itemId: string) {
-  idsToDelete.selectId(itemId)
+  hideToolbar()
+  idsToDelete.setSelection([itemId])
   confirmModalRef.value?.openModal()
 }
-// Toolbelt - Delete item //
 
-
-// Toolbelt - mutate quantity //
-const isUpdating = ref(false)
-const updatingError = ref<Error | null>(null)
-
-async function mutateItemQuantity(itemId: string, mutateValue: number) {
-  isUpdating.value = true
-  updatingError.value = null
-
-  try {
-    const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', itemId)
-    const currentDoc = shoppingList.value.find(item => item.id === itemId)
-    await updateDoc(docRef, { quantity: Number(currentDoc?.quantity) + Number(mutateValue) })
-  } catch (error) {
-    updatingError.value = error as Error
-  } finally {
-    isUpdating.value = false
-  }
-}
-
-function handleOnIncrementQuantity(itemId: string) {
-  mutateItemQuantity(itemId, 1)
-}
-
-function handleOnDecrementQuantity(itemId: string) {
-  mutateItemQuantity(itemId, -1)
-}
-
-function getIsSingleItem(itemId: string) {
-  const item = shoppingList.value.find(item => item.id === itemId)
-
-  return item?.quantity === 1
-}
 
 </script>
 
@@ -150,7 +146,6 @@ function getIsSingleItem(itemId: string) {
   <HomeViewHeader />
 
   <main class="p-2">
-
 
     <div v-if="shoppingListLoading">
       Loading...
@@ -172,8 +167,8 @@ function getIsSingleItem(itemId: string) {
 
       <BaseList>
         <ShoppingItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
-          @on-toggle-check="handleOnToggleCheck" :is-selected="itemIsSelectedToEdit(item.id)"
-          @on-edit-item="handleOnEditItem" />
+          @on-toggle-check="handleOnToggleCheck" :is-selected="itemIsSelectedForEdit(item.id)"
+          @on-select-item="handleSelectItem" />
       </BaseList>
 
       <BaseButton variant="danger" class="w-full mt-4 text-lg disabled:bg-red-950 disabled:text-ivory/50"
@@ -191,14 +186,11 @@ function getIsSingleItem(itemId: string) {
 
   </main>
 
-  <EditItemTools v-if="selectItemEdit.selection.value" @on-close-edit-tools="handleOnCloseEditTools"
-    :item-id="selectItemEdit.selection.value" @on-delete-item="handleOnDeleteItem"
-    @on-increment-quantity="handleOnIncrementQuantity" @on-decrement-quantity="handleOnDecrementQuantity"
-    :is-single-item="getIsSingleItem(selectItemEdit.selection.value)" />
-
-  <BaseModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
+  <ConfirmationModal title="Confirm delete items" ref="confirmModalRef" @on-confirm="handleOnConfirm">
     <h2 class="text-lg mb-1.5">Do you want to delete these items?</h2>
-    <DeleteList :items="itemsTodelete" @on-remove-from-list="handleOnRemoveFromList" />
-  </BaseModal>
+    <DeleteList :items="itemsTodelete" @on-remove-from-list="removeIdFromDeleteList" />
+  </ConfirmationModal>
 
+  <EditItemToolbar :item-id="selectItemToEdit.selection" @on-close-toolbar="handleCloseToolbar" ref="editItemToolbarRef"
+    @on-delete-item="handleOnDeleteItem" />
 </template>

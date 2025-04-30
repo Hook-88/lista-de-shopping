@@ -1,6 +1,5 @@
-import { computed, ref, type Ref } from 'vue'
+import { computed, type Ref } from 'vue'
 import { useSelectMultipleIds } from '@/features/select-multiple-ids/selectMultipleIds'
-import BaseModal from '@/components/modal/BaseModal.vue'
 import type { ShoppingItemInterface } from '@/types/types'
 import { writeBatch } from 'firebase/firestore'
 import { useToast } from 'vue-toast-notification'
@@ -8,10 +7,7 @@ import { useFirestore } from 'vuefire'
 import { doc } from 'firebase/firestore'
 
 export const useDeleteItems = (shoppingList: Ref<ShoppingItemInterface[]>) => {
-  // Delete items //
   const idsToDelete = useSelectMultipleIds()
-
-  const confirmModalRef = ref<InstanceType<typeof BaseModal> | null>(null)
 
   const itemsTodelete = computed(() => {
     const items = shoppingList.value.filter((shoppingItem) => {
@@ -22,16 +18,6 @@ export const useDeleteItems = (shoppingList: Ref<ShoppingItemInterface[]>) => {
 
     return items
   })
-  // Delete items
-
-  // Remove item from delete list //
-  function handleOnRemoveFromList(itemId: string) {
-    idsToDelete.deSelectId(itemId)
-
-    if (idsToDelete.selection.value.length === 0) {
-      confirmModalRef.value?.closeModal()
-    }
-  }
 
   //delete docs
   const deleting = ref(false)
@@ -86,12 +72,14 @@ export const useDeleteItems = (shoppingList: Ref<ShoppingItemInterface[]>) => {
 
   return {
     idsToDelete,
-    confirmModalRef,
     itemsTodelete,
+<<<<<<< HEAD
     handleOnRemoveFromList,
 
     deleteDocs,
     deleting,
     deletingError,
+=======
+>>>>>>> edit-item
   }
 }
