@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import AddShoppingItemView from '@/views/AddShoppingItemView.vue'
+import EditShoppingItemView from '@/views/EditShoppingItemView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,11 @@ const router = createRouter({
       path: '/shopping-list/add-item',
       name: 'add-shopping-item',
       component: AddShoppingItemView,
+    },
+    {
+      path: '/shopping-list/:itemId/edit',
+      name: 'edit-shopping-item',
+      component: EditShoppingItemView,
     },
     {
       path: '/about',

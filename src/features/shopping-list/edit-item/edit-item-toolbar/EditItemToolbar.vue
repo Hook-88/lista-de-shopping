@@ -62,7 +62,10 @@ defineExpose({
       </IconButton>
 
       <IconLink :to="{
-        name: 'about'
+        name: 'edit-shopping-item',
+        params: {
+          itemId: props.itemId.value ? props.itemId.value : '1'
+        }
       }">
         <IconEdit />
       </IconLink>
