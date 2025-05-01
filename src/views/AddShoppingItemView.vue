@@ -9,6 +9,8 @@ import { useCollection, useFirestore } from 'vuefire';
 import type { ShoppingItemInterface } from '@/types/types';
 import { computed } from 'vue';
 import BaseButton from '@/components/buttons/BaseButton.vue';
+import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
+import FavItemButton from '@/features/shopping-list/add-item/components/fav-item-button/FavItemButton.vue';
 
 const { add, isLoading } = useAddDoc('/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
 const addFavItem = useAddDoc('/favorite-shopping-items')
@@ -45,6 +47,24 @@ const shoppingListLabels = computed(() => {
   return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
 })
 
+const selectSingleFavItem = useSelectSingleId()
+
+function handleOnSelectFavItem(itemId: string) {
+  selectSingleFavItem.toggleSelect(itemId)
+}
+
+function favItemIsSelected(itemId: string) {
+  return selectSingleFavItem.selection.value === itemId
+}
+
+const selectedFavItem = computed(() => {
+  if (!selectSingleFavItem.selection.value) {
+    return undefined
+  }
+
+  return favoriteItems.value.find(item => item.id === selectSingleFavItem.selection.value)
+})
+
 </script>
 
 <template>
@@ -61,9 +81,10 @@ const shoppingListLabels = computed(() => {
 
   <main>
     <ShoppingItemForm @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading"
-      :label-options="shoppingListLabels" />
+      :label-options="shoppingListLabels" :item="selectedFavItem" />
     <section class="p-2 flex gap-2">
-      <BaseButton v-for="item in favoriteItems" :key="item.id" class="grow">{{ item.name }}</BaseButton>
+      <FavItemButton v-for="item in favoriteItems" :key="item.id" :item="item" :is-selected="favItemIsSelected(item.id)"
+        @on-select-fav-item="handleOnSelectFavItem" />
     </section>
   </main>
 

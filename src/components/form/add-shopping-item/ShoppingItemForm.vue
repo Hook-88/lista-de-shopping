@@ -110,6 +110,12 @@ watch(
     if (shoppingItem) {
       setForm()
 
+    } else {
+      formData.name = ''
+      formData.isFavorite = false
+      formData.quantity = 1
+      formData.unit = 'pieces'
+      formData.label = 'General'
     }
   },
   {
