@@ -33,7 +33,7 @@ const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
 const filteredLabelOptions = computed(() => {
   if (props.labelOptions) {
 
-    return props.labelOptions.filter(labelOption => {
+    return [...props.labelOptions.filter(labelOption => {
       const lowerCaseOption = labelOption.toLowerCase()
 
       if (lowerCaseOption.includes(formData.label.toLowerCase())) {
@@ -42,7 +42,7 @@ const filteredLabelOptions = computed(() => {
       }
       //TODO only labels with match search
 
-    })
+    }), 'General']
   }
 
   return props.labelOptions
@@ -147,10 +147,6 @@ watch(
       </div>
       <SearchWithDropdown label="Label" class="w-full" required v-model="formData.label" :options="filteredLabelOptions"
         :show-results="showLabelSearchResults" />
-
-      <!-- <InputLabelWrapper class="grow">
-        <TextInput label="Label" placeholder="Item label..." class="w-full" required v-model="formData.label" />
-      </InputLabelWrapper> -->
 
     </FormInputsWrapper>
 

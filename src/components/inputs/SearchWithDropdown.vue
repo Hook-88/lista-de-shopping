@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import InputLabelWrapper from '../form/InputLabelWrapper.vue';
 import TextInput from './TextInput.vue';
+// import IconButton from '../buttons/IconButton.vue';
+// import IconCaretDown from '../icons/IconCaretDown.vue';
 
 interface Props {
   label: string
@@ -30,6 +31,10 @@ function handleClickResult(labelOption: string) {
 <template>
   <InputLabelWrapper class="relative">
     <TextInput v-bind="props" :value="modelValue" @input="handleInput" />
+
+    <!-- <IconButton class="absolute right-0 top-5 text-2xl" type="button" @click="toggleOpenResults">
+      <IconCaretDown />
+    </IconButton> -->
 
     <ul v-if="showResults" class="bg-ash rounded-sm absolute w-full top-15">
       <li class="px-2 py-1" v-for="option in options" :key="option" @click="() => handleClickResult(option)">
