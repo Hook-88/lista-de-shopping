@@ -6,15 +6,17 @@ import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useAddDoc } from '@/features/shopping-list/add-item/addDoc';
 import { useRoute } from 'vue-router';
 import { useDocument, useFirestore } from 'vuefire';
-import { doc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import type { ShoppingItemInterface } from '@/types/types';
 
 const addNewDoc = useAddDoc()
 const route = useRoute()
 const db = useFirestore()
 
-function handleOnFormSubmit(formData: FormDatatype) {
-  addNewDoc.add(formData)
+async function handleOnUpdateItem(itemId: string, formData: FormDatatype) {
+  const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', itemId)
+
+  await updateDoc(docRef, formData)
 }
 
 const {
@@ -52,7 +54,7 @@ const {
       Error...
     </div>
 
-    <ShoppingItemForm v-else @on-form-submit="handleOnFormSubmit" :item="itemData" />
+    <ShoppingItemForm v-else @on-update-item="handleOnUpdateItem" :item="itemData" />
   </main>
 
 </template>

@@ -9,8 +9,6 @@ import { useAddItemForm } from '@/features/shopping-list/add-item/addItemForm';
 import type { ShoppingItemInterface } from '@/types/types';
 import ButtonLink from '@/components/links/ButtonLink.vue';
 import { onMounted, ref, watch } from 'vue';
-import { useDocument, useFirestore } from 'vuefire';
-import { doc, getDoc } from 'firebase/firestore';
 
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
@@ -24,12 +22,17 @@ const { formData, toggleIsFavorite, resetForm } = useAddItemForm()
 
 const emit = defineEmits<{
   (e: 'on-form-submit', newItemData: FormDatatype): void
+  (e: 'on-update-item', itemId: string, newItemData: FormDatatype): void
 }>()
 
 const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
 
 function handleSubmit() {
 
+  if (props.item) {
+    emit('on-update-item', props.item.id, { ...formData })
+    return
+  }
 
   emit('on-form-submit', { ...formData })
   resetForm()
@@ -39,12 +42,6 @@ function handleSubmit() {
 onMounted(() => {
   nameInputRef.value?.focusInput()
 })
-
-// const {
-//   data: itemData,
-//   pending: itemDataLoading,
-//   error: itemDataError
-// } = useDocument(doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', props.itemId as string))
 
 function setForm() {
 
