@@ -4,16 +4,24 @@ import IconAngleLeft from '@/components/icons/IconAngleLeft.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useRoute } from 'vue-router';
-import { useDocument, useFirestore } from 'vuefire';
-import { doc } from 'firebase/firestore';
+import { useCollection, useDocument, useFirestore } from 'vuefire';
+import { collection, doc } from 'firebase/firestore';
 import type { ShoppingItemInterface } from '@/types/types';
 import { watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import { useUpdateShoppingItem } from '@/features/shopping-list/edit-item/update-item/updateShoppingItem';
+import { computed } from 'vue';
 
 const route = useRoute()
 const db = useFirestore()
 const toast = useToast()
+
+const { data: shoppingList } = useCollection(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'))
+
+const shoppingListLabels = computed(() => {
+
+  return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
+})
 
 const {
   data: itemData,
@@ -73,8 +81,8 @@ watch(
       {{ itemError }}
     </div>
 
-    <ShoppingItemForm v-else @on-update-item="handleOnUpdateItem" :item="itemData"
-      :submit-button-disabled="isUpdating" />
+    <ShoppingItemForm v-else @on-update-item="handleOnUpdateItem" :item="itemData" :submit-button-disabled="isUpdating"
+      :label-options="shoppingListLabels" />
   </main>
 
 </template>

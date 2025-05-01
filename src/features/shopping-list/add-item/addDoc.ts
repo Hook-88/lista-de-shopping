@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import { type FormDatatype } from '@/components/form/add-shopping-item/ShoppingItemForm.vue'
 import { addDoc, collection } from 'firebase/firestore'
 
-export const useAddDoc = () => {
+export const useAddDoc = (path: string) => {
   const db = useFirestore()
 
   const toast = useToast()
@@ -23,7 +23,7 @@ export const useAddDoc = () => {
     })
 
     try {
-      await addDoc(collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items'), formData)
+      await addDoc(collection(db, path), formData)
       //clear info when done adding
       toast.clear()
 

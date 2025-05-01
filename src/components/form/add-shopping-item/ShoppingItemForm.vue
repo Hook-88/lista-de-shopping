@@ -40,7 +40,6 @@ const filteredLabelOptions = computed(() => {
 
         return labelOption
       }
-      //TODO only labels with match search
 
     }), 'General']
   }
@@ -59,6 +58,7 @@ const showLabelSearchResults = computed(() => {
 
   return true
 })
+
 
 function handleSubmit() {
   trimFormData()

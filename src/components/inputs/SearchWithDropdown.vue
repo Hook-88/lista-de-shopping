@@ -9,6 +9,8 @@ interface Props {
   modelValue?: string | number
   options: string[] | null
   showResults: boolean
+
+  autofocus?: boolean
 }
 
 const props = defineProps<Props>()
@@ -36,7 +38,7 @@ function handleClickResult(labelOption: string) {
       <IconCaretDown />
     </IconButton> -->
 
-    <ul v-if="showResults" class="bg-ash rounded-sm absolute w-full top-15">
+    <ul v-if="showResults" class="bg-ash rounded-sm absolute w-full top-15 z-40 border border-ivory/40">
       <li class="px-2 py-1" v-for="option in options" :key="option" @click="() => handleClickResult(option)">
         {{ option }}
       </li>
