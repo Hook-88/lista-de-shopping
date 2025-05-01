@@ -15,10 +15,8 @@ import { doc, getDoc } from 'firebase/firestore';
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
 interface Props {
-  itemId?: string
+  item?: ShoppingItemInterface
 }
-
-const db = useFirestore()
 
 const props = defineProps<Props>()
 
@@ -31,11 +29,6 @@ const emit = defineEmits<{
 const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
 
 function handleSubmit() {
-  if (props.itemId) {
-    // add submit if item id is true
-
-    return
-  }
 
 
   emit('on-form-submit', { ...formData })
@@ -47,28 +40,40 @@ onMounted(() => {
   nameInputRef.value?.focusInput()
 })
 
-async function getShoppingItem() {
-  const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', props.itemId as string)
-  const itemDoc = await getDoc(docRef)
-  const itemData = { ...itemDoc.data(), id: itemDoc.id } as ShoppingItemInterface
+// const {
+//   data: itemData,
+//   pending: itemDataLoading,
+//   error: itemDataError
+// } = useDocument(doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', props.itemId as string))
 
-  formData.name = itemData.name
-  formData.isFavorite = itemData.isFavorite
-  formData.quantity = itemData.quantity
-  formData.unit = itemData.unit
-  formData.label = itemData.label
+function setForm() {
+
+
+  if (props.item) {
+    const {
+      name,
+      quantity,
+      unit,
+      label,
+      isFavorite,
+    } = props.item
+
+    formData.name = name
+    formData.isFavorite = isFavorite
+    formData.quantity = quantity
+    formData.unit = unit
+    formData.label = label
+  }
 }
 
 
 
-
 watch(
-  () => props.itemId,
-  (itemId: string | undefined) => {
+  () => props.item,
+  (shoppingItem: ShoppingItemInterface | undefined) => {
 
-    if (itemId) {
-
-      getShoppingItem()
+    if (shoppingItem) {
+      setForm()
 
     }
   },
