@@ -5,10 +5,10 @@ import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useAddDoc } from '@/features/shopping-list/add-item/addDoc';
 
-const addNewDoc = useAddDoc()
+const { add, isLoading } = useAddDoc()
 
 function handleOnFormSubmit(formData: FormDatatype) {
-  addNewDoc.add(formData)
+  add(formData)
 }
 
 </script>
@@ -26,7 +26,7 @@ function handleOnFormSubmit(formData: FormDatatype) {
   </PageHeader>
 
   <main>
-    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" />
+    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading" />
   </main>
 
 </template>
