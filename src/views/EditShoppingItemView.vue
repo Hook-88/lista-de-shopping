@@ -4,8 +4,10 @@ import IconAngleLeft from '@/components/icons/IconAngleLeft.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useAddDoc } from '@/features/shopping-list/add-item/addDoc';
+import { useRoute } from 'vue-router';
 
 const addNewDoc = useAddDoc()
+const route = useRoute()
 
 function handleOnFormSubmit(formData: FormDatatype) {
   addNewDoc.add(formData)
@@ -26,7 +28,7 @@ function handleOnFormSubmit(formData: FormDatatype) {
   </PageHeader>
 
   <main>
-    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" />
+    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" :item-id="route.params.itemId as string" />
   </main>
 
 </template>

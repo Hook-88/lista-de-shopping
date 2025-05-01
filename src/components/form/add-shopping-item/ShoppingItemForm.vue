@@ -8,9 +8,19 @@ import BaseButton from '@/components/buttons/BaseButton.vue';
 import { useAddItemForm } from '@/features/shopping-list/add-item/addItemForm';
 import type { ShoppingItemInterface } from '@/types/types';
 import ButtonLink from '@/components/links/ButtonLink.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useDocument, useFirestore } from 'vuefire';
+import { doc, getDoc } from 'firebase/firestore';
 
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
+
+interface Props {
+  itemId?: string
+}
+
+const db = useFirestore()
+
+const props = defineProps<Props>()
 
 const { formData, toggleIsFavorite, resetForm } = useAddItemForm()
 
@@ -21,6 +31,13 @@ const emit = defineEmits<{
 const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
 
 function handleSubmit() {
+  if (props.itemId) {
+    // add submit if item id is true
+
+    return
+  }
+
+
   emit('on-form-submit', { ...formData })
   resetForm()
   nameInputRef.value?.focusInput()
@@ -29,6 +46,36 @@ function handleSubmit() {
 onMounted(() => {
   nameInputRef.value?.focusInput()
 })
+
+async function getShoppingItem() {
+  const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', props.itemId as string)
+  const itemDoc = await getDoc(docRef)
+  const itemData = { ...itemDoc.data(), id: itemDoc.id } as ShoppingItemInterface
+
+  formData.name = itemData.name
+  formData.isFavorite = itemData.isFavorite
+  formData.quantity = itemData.quantity
+  formData.unit = itemData.unit
+  formData.label = itemData.label
+}
+
+
+
+
+watch(
+  () => props.itemId,
+  (itemId: string | undefined) => {
+
+    if (itemId) {
+
+      getShoppingItem()
+
+    }
+  },
+  {
+    immediate: true
+  }
+)
 
 </script>
 

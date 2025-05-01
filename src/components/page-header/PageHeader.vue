@@ -10,7 +10,7 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-  <header class="text-2xl border-b border-ivory/20 flex" v-bind="props">
+  <header class="text-2xl border-b border-ivory/20 flex p-0.5" v-bind="props">
     <slot></slot>
   </header>
 </template>
