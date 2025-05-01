@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseButton from '@/components/buttons/BaseButton.vue';
+import ButtonLink from '@/components/links/ButtonLink.vue';
 import BaseList from '@/components/list/BaseList.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import HomeViewHeader from '@/components/page-header/home-view-header/HomeViewHeader.vue';
@@ -149,24 +150,32 @@ function handleOnDeleteItem(itemId: string) {
 
     <div v-else>
 
-      <header>
-        <ShoppingListFilter :list-labels="listLabels" :selected-label="selectFilter.selection.value"
-          @on-clear-filter="handleOnClearFilter" @on-select-label="handleOnSelectLabel" />
+      <ButtonLink v-if="shoppingList.length === 0" variant="action" :to="{
+        name: 'add-shopping-item'
+      }" class="w-full block text-center">
+        Add new Item
+      </ButtonLink>
 
-        <small>{{ listProgressText }}</small>
+      <div v-else>
+        <header>
+          <ShoppingListFilter :list-labels="listLabels" :selected-label="selectFilter.selection.value"
+            @on-clear-filter="handleOnClearFilter" @on-select-label="handleOnSelectLabel" />
 
-      </header>
+          <small>{{ listProgressText }}</small>
 
-      <BaseList>
-        <ShoppingItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
-          @on-toggle-check="handleOnToggleCheck" :is-selected="itemIsSelectedForEdit(item.id)"
-          @on-select-item="handleSelectItem" />
-      </BaseList>
+        </header>
 
-      <BaseButton variant="danger" class="w-full mt-4 text-lg disabled:bg-red-950 disabled:text-ivory/50"
-        :disabled="checkItem.selection.value.length === 0" @click="handleClickDeleteCheckedItems">
-        Delete Checked Items
-      </BaseButton>
+        <BaseList>
+          <ShoppingItem v-for="item in displayItems" :key="item.id" :item="item" :is-checked="itemIsChecked(item.id)"
+            @on-toggle-check="handleOnToggleCheck" :is-selected="itemIsSelectedForEdit(item.id)"
+            @on-select-item="handleSelectItem" />
+        </BaseList>
+
+        <BaseButton variant="danger" class="w-full mt-4 text-lg disabled:bg-red-950 disabled:text-ivory/50"
+          :disabled="checkItem.selection.value.length === 0" @click="handleClickDeleteCheckedItems">
+          Delete Checked Items
+        </BaseButton>
+      </div>
 
     </div>
 
