@@ -5,10 +5,11 @@ import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useRoute } from 'vue-router';
 import { useDocument, useFirestore } from 'vuefire';
-import { doc, DocumentReference, updateDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import type { ShoppingItemInterface } from '@/types/types';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import { useUpdateShoppingItem } from '@/features/shopping-list/edit-item/update-item/updateShoppingItem';
 
 const route = useRoute()
 const db = useFirestore()
@@ -20,33 +21,13 @@ const {
   error: itemError
 } = useDocument<ShoppingItemInterface>(doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', route.params.itemId as string))
 
+const { updateSuccesfull, updateShoppingItem, isUpdating } = useUpdateShoppingItem()
+
 async function handleOnUpdateItem(itemId: string, formData: FormDatatype) {
   const docRef = doc(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items', itemId)
 
   await updateShoppingItem(docRef, formData)
 }
-
-const isUpdating = ref(false)
-const updateSuccesfull = ref(false)
-const updatingError = ref<Error | null>(null)
-
-
-async function updateShoppingItem(docRef: DocumentReference, itemData: FormDatatype) {
-  isUpdating.value = true
-  updateSuccesfull.value = false
-  updatingError.value = null
-
-  try {
-    await updateDoc(docRef, itemData)
-
-    updateSuccesfull.value = true
-  } catch (error) {
-    updatingError.value = error as Error
-  } finally {
-    isUpdating.value = false
-  }
-}
-
 
 watch(
   () => updateSuccesfull.value,
@@ -89,10 +70,11 @@ watch(
     </div>
 
     <div v-else-if="itemError || !itemData">
-      Error...
+      {{ itemError }}
     </div>
 
-    <ShoppingItemForm v-else @on-update-item="handleOnUpdateItem" :item="itemData" />
+    <ShoppingItemForm v-else @on-update-item="handleOnUpdateItem" :item="itemData"
+      :submit-button-disabled="isUpdating" />
   </main>
 
 </template>

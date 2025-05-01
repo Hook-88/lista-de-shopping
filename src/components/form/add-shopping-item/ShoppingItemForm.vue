@@ -14,6 +14,7 @@ export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
 interface Props {
   item?: ShoppingItemInterface
+  submitButtonDisabled?: boolean
 }
 
 const props = defineProps<Props>()
@@ -28,6 +29,7 @@ const emit = defineEmits<{
 const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
 
 function handleSubmit() {
+  trimFormData()
 
   if (props.item) {
     emit('on-update-item', props.item.id, { ...formData })
@@ -37,6 +39,12 @@ function handleSubmit() {
   emit('on-form-submit', { ...formData })
   resetForm()
   nameInputRef.value?.focusInput()
+}
+
+function trimFormData() {
+  formData.label = formData.label.trim()
+  formData.name = formData.name.trim()
+  formData.unit = formData.unit.trim().toLowerCase()
 }
 
 onMounted(() => {
@@ -62,8 +70,6 @@ function setForm() {
     formData.label = label
   }
 }
-
-
 
 watch(
   () => props.item,
@@ -115,7 +121,8 @@ watch(
     </FormInputsWrapper>
 
     <footer class="p-2 border-y border-ivory/20 flex gap-2">
-      <BaseButton variant="action" class="grow">
+      <BaseButton variant="action" class="grow disabled:text-ivory/50 disabled:bg-sky-900"
+        :disabled="submitButtonDisabled">
         {{ props.item ? 'Save' : 'Add' }}
       </BaseButton>
       <ButtonLink variant="danger" :to="{ name: 'home' }">Cancel</ButtonLink>
