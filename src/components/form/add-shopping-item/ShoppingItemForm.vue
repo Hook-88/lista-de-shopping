@@ -115,7 +115,9 @@ watch(
     </FormInputsWrapper>
 
     <footer class="p-2 border-y border-ivory/20 flex gap-2">
-      <BaseButton variant="action" class="grow">Add item</BaseButton>
+      <BaseButton variant="action" class="grow">
+        {{ props.item ? 'Save' : 'Add' }}
+      </BaseButton>
       <ButtonLink variant="danger" :to="{ name: 'home' }">Cancel</ButtonLink>
     </footer>
 
