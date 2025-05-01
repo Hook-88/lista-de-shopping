@@ -29,7 +29,7 @@ function handleClickListFilter(label: string) {
 
 
 <template>
-  <ul class="flex gap-2 mb-1">
+  <ul class="flex gap-2 mb-1 flex-wrap">
     <li>
       <FilterButton :is-selected="!selectedLabel" @click="handleClickAllLabels">
         All

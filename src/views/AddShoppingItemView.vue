@@ -4,12 +4,28 @@ import IconAngleLeft from '@/components/icons/IconAngleLeft.vue';
 import IconLink from '@/components/links/IconLink.vue';
 import PageHeader from '@/components/page-header/PageHeader.vue';
 import { useAddDoc } from '@/features/shopping-list/add-item/addDoc';
+import { collection } from 'firebase/firestore';
+import { useCollection, useFirestore } from 'vuefire';
+import type { ShoppingItemInterface } from '@/types/types';
+import { computed } from 'vue';
 
 const { add, isLoading } = useAddDoc()
 
 function handleOnFormSubmit(formData: FormDatatype) {
   add(formData)
 }
+
+const db = useFirestore()
+const collectionRef = collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
+
+const {
+  data: shoppingList,
+} = useCollection<ShoppingItemInterface>(collectionRef)
+
+const shoppingListLabels = computed(() => {
+
+  return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
+})
 
 </script>
 
@@ -26,7 +42,8 @@ function handleOnFormSubmit(formData: FormDatatype) {
   </PageHeader>
 
   <main>
-    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading" />
+    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading"
+      :label-options="shoppingListLabels" />
   </main>
 
 </template>

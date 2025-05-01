@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref, type InputHTMLAttributes } from 'vue';
+import { ref } from 'vue';
 
-interface Props extends /* @vue-ignore */ InputHTMLAttributes {
-  label: string
+interface Props {
+  label?: string
   modelValue?: string | number
+
+  value?: string | number
+  autofocus?: boolean
+  placeholder?: string
+  type?: 'text' | 'password' | 'e-mail' | 'number'
 }
 
 defineProps<Props>()

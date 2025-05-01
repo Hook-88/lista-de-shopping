@@ -8,13 +8,15 @@ import BaseButton from '@/components/buttons/BaseButton.vue';
 import { useAddItemForm } from '@/features/shopping-list/add-item/addItemForm';
 import type { ShoppingItemInterface } from '@/types/types';
 import ButtonLink from '@/components/links/ButtonLink.vue';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import SearchWithDropdown from '@/components/inputs/SearchWithDropdown.vue';
 
 export type FormDatatype = Omit<ShoppingItemInterface, 'id'>
 
 interface Props {
   item?: ShoppingItemInterface
   submitButtonDisabled?: boolean
+  labelOptions: string[] | null
 }
 
 const props = defineProps<Props>()
@@ -27,6 +29,36 @@ const emit = defineEmits<{
 }>()
 
 const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
+
+const filteredLabelOptions = computed(() => {
+  if (props.labelOptions) {
+
+    return props.labelOptions.filter(labelOption => {
+      const lowerCaseOption = labelOption.toLowerCase()
+
+      if (lowerCaseOption.includes(formData.label.toLowerCase())) {
+
+        return labelOption
+      }
+      //TODO only labels with match search
+
+    })
+  }
+
+  return props.labelOptions
+})
+
+const showLabelSearchResults = computed(() => {
+  if (!filteredLabelOptions.value) {
+    return false
+  }
+
+  if (filteredLabelOptions.value[0] === formData.label) {
+    return false
+  }
+
+  return true
+})
 
 function handleSubmit() {
   trimFormData()
@@ -113,10 +145,12 @@ watch(
         </InputLabelWrapper>
 
       </div>
+      <SearchWithDropdown label="Label" class="w-full" required v-model="formData.label" :options="filteredLabelOptions"
+        :show-results="showLabelSearchResults" />
 
-      <InputLabelWrapper class="grow">
+      <!-- <InputLabelWrapper class="grow">
         <TextInput label="Label" placeholder="Item label..." class="w-full" required v-model="formData.label" />
-      </InputLabelWrapper>
+      </InputLabelWrapper> -->
 
     </FormInputsWrapper>
 
