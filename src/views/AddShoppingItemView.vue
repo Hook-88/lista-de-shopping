@@ -11,17 +11,24 @@ import { computed } from 'vue';
 import BaseButton from '@/components/buttons/BaseButton.vue';
 import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import FavItemButton from '@/features/shopping-list/add-item/components/fav-item-button/FavItemButton.vue';
+import ShoppingItemFormTwo from '@/components/form/add-shopping-item/ShoppingItemFormTwo.vue';
 
 const { add, isLoading } = useAddDoc('/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
 const addFavItem = useAddDoc('/favorite-shopping-items')
 
-function handleOnFormSubmit(formData: FormDatatype) {
-  const favoriteNames = favoriteItems.value.map(item => item.name)
+function handleOnFormSubmit(formData: FormDatatype, itemId: string | undefined) {
+  // const favoriteNames = favoriteItems.value.map(item => item.name)
 
+  console.log(itemId)
 
-  if (formData.isFavorite && !favoriteNames.includes(formData.name)) {
+  if (itemId === undefined && formData.isFavorite) {
+    console.log('Add to fav')
     addFavItem.add(formData)
   }
+
+  // if (formData.isFavorite && !favoriteNames.includes(formData.name)) {
+  //   addFavItem.add(formData)
+  // }
 
 
   add(formData)
@@ -80,9 +87,9 @@ const selectedFavItem = computed(() => {
   </PageHeader>
 
   <main>
-    <ShoppingItemForm @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading"
+    <ShoppingItemFormTwo @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading"
       :label-options="shoppingListLabels" :item="selectedFavItem" />
-    <section class="p-2 flex gap-2">
+    <section class="p-2 flex gap-2 flex-wrap">
       <FavItemButton v-for="item in favoriteItems" :key="item.id" :item="item" :is-selected="favItemIsSelected(item.id)"
         @on-select-fav-item="handleOnSelectFavItem" />
     </section>
