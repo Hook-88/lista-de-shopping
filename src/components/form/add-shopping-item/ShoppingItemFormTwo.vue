@@ -22,9 +22,26 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { formData, toggleIsFavorite, resetForm } = useAddItemForm()
+const { formData, resetForm } = useAddItemForm()
+
+function toggleIsFavorite() {
+
+  if (!props.item?.id) {
+    formData.isFavorite = !formData.isFavorite
+  }
+
+  emit('on-toggle-favorite', {
+    favValue: formData.isFavorite,
+    itemId: props.item?.id
+  })
+}
 
 const emit = defineEmits<{
+  (e: 'on-toggle-favorite', favItemObj: {
+    itemId: string | undefined
+    favValue: boolean
+  }): void
+
   (e: 'on-form-submit', newItemData: FormDatatype, itemId: string | undefined): void
   (e: 'on-update-item', itemId: string, newItemData: FormDatatype): void
 }>()
@@ -34,15 +51,14 @@ const nameInputRef = ref<InstanceType<typeof TextInput> | null>(null)
 const filteredLabelOptions = computed(() => {
   if (props.labelOptions) {
 
-    return [...props.labelOptions.filter(labelOption => {
+    return props.labelOptions.filter(labelOption => {
       const lowerCaseOption = labelOption.toLowerCase()
 
       if (lowerCaseOption.includes(formData.label.toLowerCase())) {
 
         return labelOption
       }
-
-    }), 'General']
+    })
   }
 
   return props.labelOptions
@@ -53,7 +69,7 @@ const showLabelSearchResults = computed(() => {
     return false
   }
 
-  if (filteredLabelOptions.value[0] === formData.label) {
+  if (filteredLabelOptions.value[0] === formData.label || filteredLabelOptions.value.length === 0) {
     return false
   }
 
@@ -84,6 +100,7 @@ watch(
   (item: ShoppingItemInterface | undefined) => {
 
     if (item) {
+      console.log(item)
       formData.name = item.name
       formData.quantity = item.quantity
       formData.isFavorite = item.isFavorite
