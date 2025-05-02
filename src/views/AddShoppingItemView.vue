@@ -8,33 +8,26 @@ import { collection } from 'firebase/firestore';
 import { useCollection, useFirestore } from 'vuefire';
 import type { ShoppingItemInterface } from '@/types/types';
 import { computed, ref } from 'vue';
-import { useSelectSingleId } from '@/features/select-single-id/selectSingleId';
 import FavItemButton from '@/features/shopping-list/add-item/components/fav-item-button/FavItemButton.vue';
 import ShoppingItemFormTwo from '@/components/form/add-shopping-item/ShoppingItemFormTwo.vue';
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import { useDeleteDoc } from '@/features/firestore/deleteDoc';
+import { useSelectFavItem } from '@/features/shopping-list/add-item/select-fav-item/selectFavItem';
 
-const { add, isLoading } = useAddDoc('/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
-const addFavItem = useAddDoc('/favorite-shopping-items')
+const {
+  add: addShoppingItem,
+  isLoading: addingShoppingItem
+} = useAddDoc('/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
 
-function handleOnFormSubmit(formData: FormDatatype, itemId: string | undefined) {
-
-  if (itemId === undefined && formData.isFavorite) {
-    addFavItem.add(formData)
-  }
-
-  add(formData)
-  selectSingleFavItem.clearSelection()
-  itemForForm.value = undefined
-}
+const {
+  add: addFavItem
+} = useAddDoc('/favorite-shopping-items')
 
 const db = useFirestore()
 const collectionRef = collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
 const favItemsCollectionRef = collection(db, '/favorite-shopping-items')
 
-const {
-  data: shoppingList,
-} = useCollection<ShoppingItemInterface>(collectionRef)
+const { data: shoppingList, } = useCollection<ShoppingItemInterface>(collectionRef)
 
 const {
   data: favoriteItems,
@@ -48,27 +41,18 @@ const shoppingListLabels = computed(() => {
   return [...new Set(shoppingList.value.map(shoppingItem => shoppingItem.label))]
 })
 
-const selectSingleFavItem = useSelectSingleId()
+// select fav item //
+const { selectedFavItem, toggleSelectFavItem, clearSelection: clearFavItemSelection, favItemIsSelected } = useSelectFavItem(favoriteItems)
 
-const selectedFavItem = computed(() => {
-  if (!selectSingleFavItem.selection.value) {
-    return undefined
-  }
-
-  return favoriteItems.value.find(item => item.id === selectSingleFavItem.selection.value)
-})
+const itemForForm = ref<ShoppingItemInterface | undefined>()
 
 function handleOnSelectFavItem(itemId: string) {
-  selectSingleFavItem.toggleSelect(itemId)
+  toggleSelectFavItem(itemId)
 
   itemForForm.value = selectedFavItem.value
 }
 
-function favItemIsSelected(itemId: string) {
-  return selectSingleFavItem.selection.value === itemId
-}
-
-// Refactor this
+// TODO Why do i need the favValue? //
 function handleToggleFavorite(favItemObj: {
   itemId: string | undefined
   favValue: boolean
@@ -80,13 +64,23 @@ function handleToggleFavorite(favItemObj: {
 
     return
   }
+}
+// select fav item //
 
-  console.log('new item')
+function handleOnFormSubmit(formData: FormDatatype, itemId: string | undefined) {
+  // if it's a new item and it's marked favorite, add to fav list
+  if (itemId === undefined && formData.isFavorite) {
+    addFavItem(formData)
+  }
+
+  addShoppingItem(formData)
+  // clear
+  clearFavItemSelection()
+  itemForForm.value = undefined
 }
 
-
+// remove item from fav-list modal //
 const confirmationModalRef = ref<InstanceType<typeof ConfirmationModal> | null>(null)
-const { deleteDocument } = useDeleteDoc('/favorite-shopping-items')
 
 function openConfirmModal() {
   confirmationModalRef.value?.openModal()
@@ -95,21 +89,25 @@ function openConfirmModal() {
 function closeConfirmModal() {
   confirmationModalRef.value?.closeModal()
 }
+// remove item from fav-list modal //
+
+// remove item from fav-list //
+const { deleteDocument: removeDocFormFavList } = useDeleteDoc('/favorite-shopping-items')
 
 async function handleOnConfirmRemove() {
 
-  await deleteDocument(selectedFavItem.value!.id)
+  await removeDocFormFavList(selectedFavItem.value!.id)
 
+  // Keep form filled but set isFav to false
   if (itemForForm.value) {
     itemForForm.value = { ...itemForForm.value, isFavorite: false }
   }
 
-  selectSingleFavItem.clearSelection()
-
+  clearFavItemSelection()
   closeConfirmModal()
 }
+// remove item from fav-list //
 
-const itemForForm = ref<ShoppingItemInterface | undefined>()
 
 </script>
 
@@ -126,12 +124,17 @@ const itemForForm = ref<ShoppingItemInterface | undefined>()
   </PageHeader>
 
   <main>
-    <ShoppingItemFormTwo @on-form-submit="handleOnFormSubmit" :submit-button-disabled="isLoading"
+    <ShoppingItemFormTwo @on-form-submit="handleOnFormSubmit" :submit-button-disabled="addingShoppingItem"
       :label-options="shoppingListLabels" :item="itemForForm" @on-toggle-favorite="handleToggleFavorite" />
+
     <section class="p-2 flex gap-2 flex-wrap">
-      <FavItemButton v-for="item in favoriteItems" :key="item.id" :item="item" :is-selected="favItemIsSelected(item.id)"
-        @on-select-fav-item="handleOnSelectFavItem" />
+      <h2 v-if="favoriteItemsLoading">Loading...</h2>
+
+      <FavItemButton v-else v-for="item in favoriteItems" :key="item.id" :item="item"
+        :is-selected="favItemIsSelected(item.id)" @on-select-fav-item="handleOnSelectFavItem" />
     </section>
+
+
   </main>
 
   <ConfirmationModal title="Remove item from fav-list?" ref="confirmationModalRef" @on-confirm="handleOnConfirmRemove">
