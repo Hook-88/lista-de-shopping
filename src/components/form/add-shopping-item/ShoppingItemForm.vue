@@ -21,7 +21,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { formData, toggleIsFavorite, resetForm } = useAddItemForm()
+const { formData, resetForm } = useAddItemForm()
 
 const emit = defineEmits<{
   (e: 'on-form-submit', newItemData: FormDatatype): void
@@ -135,8 +135,7 @@ watch(
           <TextInput label="Name" placeholder="Item name..." required v-model="formData.name" ref="nameInputRef" />
         </InputLabelWrapper>
 
-        <IsFavoriteButton :is-favorite="formData.isFavorite" class="self-stretch flex text-2xl mb-0.5 items-end pr-0"
-          @click="toggleIsFavorite" />
+        <IsFavoriteButton :is-favorite="formData.isFavorite" class="self-stretch flex text-2xl mb-0.5 items-end pr-0" />
 
       </div>
 
