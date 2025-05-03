@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import BaseInput from '@/components/inputs/BaseInput.vue';
-import type { InputHTMLAttributes } from 'vue';
 
-interface Props extends /* @vue-ignore */ InputHTMLAttributes {
+interface Props {
   label: string
   modelValue?: string | number
 }
