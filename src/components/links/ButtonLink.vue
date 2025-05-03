@@ -11,7 +11,7 @@ defineProps<Props>()
 </script>
 
 <template>
-  <IconLink :to="to" class="border border-ivory/20 rounded-sm" :class="{
+  <IconLink :to="to" class="border border-ivory/20 rounded-sm flex items-center" :class="{
     'bg-red-900': variant === 'danger',
     'bg-sky-800': variant === 'action'
   }">

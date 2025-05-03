@@ -91,9 +91,9 @@ function trimFormData() {
   formData.unit = formData.unit.trim().toLowerCase()
 }
 
-onMounted(() => {
-  nameInputRef.value?.focusInput()
-})
+// onMounted(() => {
+//   nameInputRef.value?.focusInput()
+// })
 
 watch(
   () => props.item,
@@ -155,7 +155,7 @@ watch(
 
     </FormInputsWrapper>
 
-    <footer class="p-2 border-y border-ivory/20 flex gap-2">
+    <footer class=" px-4 flex gap-4 border-b border-ivory/20 pb-4">
       <BaseButton variant="action" class="grow disabled:text-ivory/50 disabled:bg-sky-900"
         :disabled="submitButtonDisabled">
         Add

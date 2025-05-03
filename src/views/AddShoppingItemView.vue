@@ -119,13 +119,13 @@ async function handleOnConfirmRemove() {
   <main>
     <ShoppingItemFormTwo @on-form-submit="handleOnFormSubmit" :submit-button-disabled="addingShoppingItem"
       :label-options="shoppingListLabels" :item="itemForForm" @on-toggle-favorite="handleToggleFavorite" />
-
-    <section class="p-2 flex gap-2 flex-wrap">
+    <section class="p-4 flex gap-2 flex-wrap">
       <h2 v-if="favoriteItemsLoading">Loading...</h2>
 
       <FavItemButton v-else v-for="item in favoriteItems" :key="item.id" :item="item"
         :is-selected="favItemIsSelected(item.id)" @on-select-fav-item="handleOnSelectFavItem" />
     </section>
+
   </main>
 
   <ConfirmationModal title="Remove item from fav-list?" ref="confirmationModalRef" @on-confirm="handleOnConfirmRemove">
