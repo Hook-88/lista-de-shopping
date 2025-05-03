@@ -13,6 +13,7 @@ import ShoppingItemFormTwo from '@/components/form/add-shopping-item/ShoppingIte
 import ConfirmationModal from '@/components/modal/confirmation-modal/ConfirmationModal.vue';
 import { useDeleteDoc } from '@/features/firestore/deleteDoc';
 import { useSelectFavItem } from '@/features/shopping-list/add-item/select-fav-item/selectFavItem';
+import { useConfirmRemoveModal } from '@/features/shopping-list/add-item/confirmRemoveModal';
 
 const {
   add: addShoppingItem,
@@ -25,9 +26,10 @@ const {
 
 const db = useFirestore()
 const collectionRef = collection(db, '/shopping-list/sesNgDGMJVKvzIki6ru3/shopping-items')
-const favItemsCollectionRef = collection(db, '/favorite-shopping-items')
 
 const { data: shoppingList, } = useCollection<ShoppingItemInterface>(collectionRef)
+
+const favItemsCollectionRef = collection(db, '/favorite-shopping-items')
 
 const {
   data: favoriteItems,
@@ -74,21 +76,12 @@ function handleOnFormSubmit(formData: FormDatatype, itemId: string | undefined) 
   }
 
   addShoppingItem(formData)
-  // clear
   clearFavItemSelection()
   itemForForm.value = undefined
 }
 
 // remove item from fav-list modal //
-const confirmationModalRef = ref<InstanceType<typeof ConfirmationModal> | null>(null)
-
-function openConfirmModal() {
-  confirmationModalRef.value?.openModal()
-}
-
-function closeConfirmModal() {
-  confirmationModalRef.value?.closeModal()
-}
+const { confirmationModalRef, closeConfirmModal, openConfirmModal } = useConfirmRemoveModal()
 // remove item from fav-list modal //
 
 // remove item from fav-list //
@@ -133,8 +126,6 @@ async function handleOnConfirmRemove() {
       <FavItemButton v-else v-for="item in favoriteItems" :key="item.id" :item="item"
         :is-selected="favItemIsSelected(item.id)" @on-select-fav-item="handleOnSelectFavItem" />
     </section>
-
-
   </main>
 
   <ConfirmationModal title="Remove item from fav-list?" ref="confirmationModalRef" @on-confirm="handleOnConfirmRemove">
